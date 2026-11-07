@@ -1,0 +1,181 @@
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KONSENA AI - Audit Izin Aplikasi</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              purple: '#5B36D6',
+              purpleDark: '#3C1E99',
+              purpleLight: '#7C5CF0',
+              lavender: '#EDE9FE',
+              lavenderText: '#5B36D6',
+              softGray: '#f8fafc',
+              borderLight: '#e2e8f0',
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="base-layout">
+    body {
+      background-color: #f1f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Mobile frame container shadow and styling */
+    .mobile-screen-wrapper {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 10px #1e293b;
+    }
+    /* Hide scrollbar for clean app experience */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8">
+<!-- BEGIN: MobileDeviceFrame -->
+<div class="mobile-screen-wrapper relative w-full max-w-[390px] h-[844px] bg-white rounded-[48px] overflow-hidden flex flex-col border-[3px] border-slate-700/20" data-purpose="iphone-mockup-container">
+<!-- BEGIN: iOSStatusBar -->
+<header class="w-full pt-3 px-7 pb-1 flex justify-between items-center text-xs font-semibold text-slate-900 select-none shrink-0" data-purpose="status-bar">
+<!-- Time -->
+<span class="tracking-tight text-sm font-semibold">09:41</span>
+<!-- Dynamic Island / Notch Placeholder -->
+<div class="w-24 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-2 hidden sm:block opacity-90"></div>
+<!-- Status Icons (Signal, Wifi, Battery) -->
+<div class="flex items-center gap-1.5">
+<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+<path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z" opacity="0.3"></path>
+<path d="M2 17h20v2H2z" opacity="0"></path>
+<rect height="6" rx="1" width="3" x="2" y="14"></rect>
+<rect height="9" rx="1" width="3" x="7" y="11"></rect>
+<rect height="12" rx="1" width="3" x="12" y="8"></rect>
+<rect height="15" rx="1" width="3" x="17" y="5"></rect>
+</svg>
+<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.5c3.5 0 6.74 1.34 9.21 3.55L12 19.33 2.79 11.05C5.26 8.84 8.5 7.5 12 7.5z"></path>
+</svg>
+<div class="w-5 h-2.5 border border-slate-900 rounded-sm p-0.5 flex items-center">
+<div class="h-full w-full bg-slate-900 rounded-2xs"></div>
+</div>
+</div>
+</header>
+<!-- END: iOSStatusBar -->
+<!-- BEGIN: AppContentArea -->
+<main class="flex-1 overflow-y-auto no-scrollbar px-5 pt-3 pb-6 flex flex-col gap-4 text-slate-800" data-purpose="dashboard-main-content">
+<!-- BEGIN: TopBar -->
+<section class="flex items-center justify-between py-1" data-purpose="app-branding">
+<div class="flex items-center gap-2.5">
+<!-- Logo Icon -->
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa-wR8PZ1JcVS9xLxbTLMPP5tkyWz9LuGek86ijlGBU66ABRLbhhm4vZyV7NK-nFExpfvjwZCikcvzzURV4ku4SP7LCZPoOKQ8C83RU-VN5MMQTHISEUjvoC-2mp6EwCB1-XsO0WUsg_37DxOczpGmAgw13RtHyXuSiursax4TzZL6Z0f9EvxAR9_1zt4ySbbXdBIjpH9Wy1llgmwo1KKDNB8QxfqMLDRkezhNq14o8DodcqOlExhO" alt="KONSENA AI Logo" class="w-8 h-8 rounded-lg object-contain shadow-sm">
+<!-- Title & Subtitle -->
+<div class="flex flex-col">
+<h1 class="text-xs font-black tracking-wider text-slate-900 uppercase">KONSENA AI</h1>
+<span class="text-[9px] tracking-widest text-[#7838D8] font-semibold uppercase">PRIVACY INTELLIGENCE</span>
+</div>
+</div>
+<!-- Demo Badge -->
+<span class="text-[10px] font-bold text-[#5A3DAD] bg-[#E5E0F9] border border-[#C4BDD6] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+          DEMO
+        </span>
+</section>
+<!-- END: TopBar -->
+<!-- BEGIN: HeroBannerCard -->
+<section class="relative bg-gradient-to-br from-[#252148] via-[#342D61] to-[#5A3DAD] text-white p-5 rounded-2xl overflow-hidden shadow-lg shadow-purple-500/10 cursor-pointer" data-purpose="hero-audit-banner">
+<!-- Subtle decorative ambient ring -->
+<div class="absolute -right-8 -top-8 w-44 h-44 bg-purple-300/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col items-start gap-1.5">
+<span class="text-[9px] font-bold tracking-widest text-purple-200 uppercase">
+            AUDIT PERSETUJUAN DIGITAL
+          </span>
+<h2 class="text-xl font-bold tracking-tight text-white leading-tight">
+            Pahami izin.<br>Lindungi privasi.
+          </h2>
+<p class="text-[11px] text-purple-100/90 leading-relaxed mt-1 max-w-[90%]">
+            Periksa izin aplikasi dan bandingkan dengan kebijakan privasi secara berbasis bukti.
+          </p>
+<!-- Call To Action Button -->
+<button onclick="alert('Mengarahkan ke Alur: 02. Pilih Aplikasi');" class="mt-3.5 inline-flex items-center gap-1.5 bg-white text-[#5A3DAD] hover:bg-purple-50 hover:shadow-lg active:scale-95 cursor-pointer transition-all text-xs font-bold px-4 py-2 rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400" type="button" id="btn-mulai-audit"><span class="">Mulai Audit</span><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+</div>
+</section>
+<!-- END: HeroBannerCard -->
+<!-- BEGIN: ActivitySummarySection -->
+<section class="flex flex-col gap-2.5 mt-1" data-purpose="activity-summary">
+<div class="flex justify-between items-center px-0.5">
+<h3 class="text-xs font-bold text-slate-800">Ringkasan aktivitas</h3>
+<span class="text-[10px] text-purple-600/80 font-medium">Sesi contoh</span>
+</div>
+<div class="grid grid-cols-2 gap-3"><div class="bg-white border border-[#C4BDD6] rounded-xl p-3.5 flex flex-col justify-between h-24 shadow-[0_1px_3px_rgba(90,61,173,0.04)]">
+<div class="w-7 h-7 rounded-lg bg-[#E5E0F9] flex items-center justify-center text-[#5A3DAD]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<rect height="16" rx="2" width="18" x="3" y="4"></rect>
+<line x1="7" x2="17" y1="9" y2="9"></line>
+<line x1="7" x2="17" y1="13" y2="13"></line>
+</svg>
+</div>
+<div>
+<span class="text-xl font-bold text-slate-800 block leading-none">0</span>
+<span class="text-[10px] text-slate-500 font-medium mt-1 block">Audit tersimpan</span>
+</div>
+</div>
+<div class="bg-white border border-[#C4BDD6] rounded-xl p-3.5 flex flex-col justify-between h-24 shadow-[0_1px_3px_rgba(90,61,173,0.04)]">
+<div class="w-7 h-7 rounded-lg bg-[#E5E0F9] flex items-center justify-center text-[#5A3DAD]">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="9"></circle>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</div>
+<div>
+<span class="text-xl font-bold text-slate-800 block leading-none">0</span>
+<span class="text-[10px] text-slate-500 font-medium mt-1 block">Analisis contoh</span>
+</div>
+</div></div>
+</section>
+<!-- END: ActivitySummarySection -->
+<!-- BEGIN: HowItWorksSection -->
+<section class="flex flex-col gap-2.5 mt-1" data-purpose="how-it-works">
+<h3 class="text-xs font-bold text-slate-800 px-0.5">Bagaimana cara kerjanya?</h3>
+<div class="bg-white border border-slate-200/90 rounded-2xl p-2.5 flex flex-col gap-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]"><div onclick="alert('Langkah 1: Menuju Pilih Aplikasi');" class="flex items-center justify-between p-2 rounded-xl hover:bg-[#E5E0F9]/40 active:scale-[0.98] cursor-pointer transition-all border border-transparent hover:border-purple-200"><div class="flex items-center gap-3"><span class="w-5 h-5 rounded-full bg-[#E5E0F9] text-[#5A3DAD] text-[10px] font-bold flex items-center justify-center shrink-0">1</span><span class="text-xs font-medium text-slate-800">Pilih aplikasi</span></div><span class="text-[10px] font-semibold text-[#5A3DAD] bg-[#E5E0F9] px-2 py-0.5 rounded-full">Android</span></div><div onclick="alert('Langkah 2: Menuju Cek Izin &amp; Dokumen');" class="flex items-center justify-between p-2 rounded-xl hover:bg-[#E5E0F9]/40 active:scale-[0.98] cursor-pointer transition-all border border-transparent hover:border-purple-200"><div class="flex items-center gap-3"><span class="w-5 h-5 rounded-full bg-[#E5E0F9] text-[#5A3DAD] text-[10px] font-bold flex items-center justify-center shrink-0">2</span><span class="text-xs font-medium text-slate-800">Cek izin &amp; dokumen</span></div><span class="text-[10px] font-semibold text-[#5A3DAD] bg-[#E5E0F9] px-2 py-0.5 rounded-full">Bukti</span></div><div onclick="alert('Langkah 3: Menuju Tinjau Rekomendasi');" class="flex items-center justify-between p-2 rounded-xl hover:bg-[#E5E0F9]/40 active:scale-[0.98] cursor-pointer transition-all border border-transparent hover:border-purple-200"><div class="flex items-center gap-3"><span class="w-5 h-5 rounded-full bg-[#E5E0F9] text-[#5A3DAD] text-[10px] font-bold flex items-center justify-center shrink-0">3</span><span class="text-xs font-medium text-slate-800">Tinjau rekomendasi</span></div><span class="text-[10px] font-semibold text-[#5A3DAD] bg-[#E5E0F9] px-2 py-0.5 rounded-full">Pengguna</span></div></div>
+</section>
+<!-- END: HowItWorksSection -->
+</main>
+<!-- END: AppContentArea -->
+<!-- BEGIN: BottomNavigationBar -->
+<nav class="w-full bg-white border-t border-slate-200/80 pt-2.5 pb-6 flex justify-between items-center text-slate-400 select-none shrink-0 px-4" data-purpose="bottom-tab-bar"><a class="flex flex-col items-center gap-1 text-[#5A3DAD] active:scale-90 transition-transform cursor-pointer" data-purpose="nav-beranda" href="#" onclick="event.preventDefault();"><svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 013 19.5v-9z" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="text-[10px] font-bold tracking-tight text-[#5A3DAD]">Beranda</span></a><a class="flex flex-col items-center gap-1 text-slate-400 hover:text-[#5B36D6] active:scale-90 transition-all cursor-pointer" data-purpose="nav-new-audit" href="#" onclick="event.preventDefault(); alert('Navigasi: 02 · Mulai New Audit');"><svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7v6m-3-3h6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="text-[10px] font-medium tracking-tight">New Audit</span></a><a class="flex flex-col items-center gap-1 text-slate-400 hover:text-[#5B36D6] active:scale-90 transition-all cursor-pointer" data-purpose="nav-scan" href="#" onclick="event.preventDefault(); alert('Navigasi: Fitur Scan Cepat');"><div class="w-8 h-8 rounded-full bg-[#E5E0F9] text-[#5A3DAD] flex items-center justify-center -mt-2 shadow-sm hover:shadow transition-shadow"><svg class="w-4 h-4 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2m-10 0H5a2 2 0 01-2-2v-2m1 0h12" stroke-linecap="round" stroke-linejoin="round"></path></svg></div><span class="text-[10px] font-medium tracking-tight">Scan</span></a><a class="flex flex-col items-center gap-1 text-slate-400 hover:text-[#5B36D6] active:scale-90 transition-all cursor-pointer" data-purpose="nav-history" href="#" onclick="event.preventDefault(); alert('Navigasi: Riwayat Audit');"><svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M12 7v5l3 3" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="text-[10px] font-medium tracking-tight">History</span></a><a class="flex flex-col items-center gap-1 text-slate-400 hover:text-[#5B36D6] active:scale-90 transition-all cursor-pointer" data-purpose="nav-profile" href="#" onclick="event.preventDefault(); alert('Navigasi: Profil &amp; Pengaturan');"><svg class="w-5 h-5 stroke-current" fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"></circle></svg><span class="text-[10px] font-medium tracking-tight">Profile</span></a></nav>
+<!-- END: BottomNavigationBar -->
+<!-- BEGIN: iOSHomeIndicator -->
+<div class="w-full flex justify-center pb-2 bg-white" data-purpose="home-indicator">
+<div class="w-32 h-1 bg-slate-300 rounded-full"></div>
+</div>
+<!-- END: iOSHomeIndicator -->
+</div>
+<!-- END: MobileDeviceFrame -->
+
+
+
+
+
+
+
+
+
+
+</body></html>

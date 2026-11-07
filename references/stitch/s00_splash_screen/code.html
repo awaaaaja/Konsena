@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>Konsena AI - Splash Screen</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts for Modern iOS Aesthetic -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              navy: '#0b0819',
+              dark: '#120d2a',
+              deepPurple: '#1d1238',
+              violet: '#8c52ff',
+              neonViolet: '#a855f7',
+              lavender: '#d8b4fe',
+            }
+          },
+          animation: {
+            'pulse-subtle': 'pulseGlow 4s ease-in-out infinite',
+            'progress-slide': 'progressLoading 2.8s ease-in-out infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
+              '50%': { opacity: '0.75', transform: 'scale(1.08)' },
+            },
+            progressLoading: {
+              '0%': { transform: 'translateX(-100%)' },
+              '50%': { transform: 'translateX(0%)' },
+              '100%': { transform: 'translateX(100%)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Atmospheric Styles -->
+<style data-purpose="planetary-curve-effect">
+    /* Curved planetary horizon glowing sphere at the bottom */
+    .planetary-horizon {
+      position: absolute;
+      bottom: -320px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 680px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at top, #7c3aed 0%, #3b1b68 35%, #180d32 65%, #0d071d 100%);
+      box-shadow: 0 -12px 60px 10px rgba(168, 85, 247, 0.42),
+                  0 -2px 25px 2px rgba(216, 180, 254, 0.5),
+                  inset 0 2px 18px 2px rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+    }
+    
+    /* Fine-grain star/dust highlight overlays */
+    .rim-light {
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(220, 190, 255, 0.85) 50%, transparent);
+      filter: blur(0.5px);
+    }
+  </style>
+<style data-purpose="viewport-constraint">
+    /* Lock body strictly to mobile dimensions view */
+    body {
+      background-color: #05030b;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+<!-- END: Custom Atmospheric Styles -->
+</head>
+<body class="selection:bg-purple-500 selection:text-white">
+<!-- BEGIN: MobileFrameContainer -->
+<!-- Constrained precisely to 390x844 px mobile aspect ratio, flexible up to mobile screens -->
+<div class="relative w-full max-w-[390px] h-[844px] overflow-hidden bg-gradient-to-b from-[#0e0921] via-[#160f2e] to-[#0c081e] flex flex-col justify-between shadow-[0_25px_70px_rgba(0,0,0,0.8)] sm:rounded-[48px] border sm:border-[#2f2252]/40 select-none" data-purpose="ios-device-container">
+<!-- Ambient upper background illumination -->
+<div class="absolute -top-24 -left-20 w-80 h-80 bg-purple-700/20 rounded-full blur-[100px] pointer-events-none" data-purpose="ambient-lighting"></div>
+<div class="absolute top-1/3 -right-24 w-80 h-80 bg-violet-600/15 rounded-full blur-[110px] pointer-events-none" data-purpose="ambient-lighting"></div>
+<!-- BEGIN: iOSStatusBar -->
+<header class="relative z-30 pt-3 px-8 flex justify-between items-center text-white text-[14px] font-semibold tracking-tight" data-purpose="ios-status-bar">
+<!-- Time Display -->
+<span class="tracking-normal font-medium text-[15px]">9:41</span>
+<!-- System Status Icons (Signal, Wifi, Battery) -->
+<div class="flex items-center space-x-2 text-white fill-current opacity-95">
+<!-- Cellular Signal -->
+<svg class="w-4 h-3.5" fill="currentColor" viewBox="0 0 17 12">
+<rect height="3" rx="0.6" width="2.5" x="0" y="9"></rect>
+<rect height="5.5" rx="0.6" width="2.5" x="4.5" y="6.5"></rect>
+<rect height="8.5" rx="0.6" width="2.5" x="9" y="3.5"></rect>
+<rect height="11.5" rx="0.6" width="2.5" x="13.5" y="0.5"></rect>
+</svg>
+<!-- Wi-Fi -->
+<svg class="w-4 h-3.5" fill="currentColor" viewBox="0 0 16 12">
+<path clip-rule="evenodd" d="M8 2.5C5.1 2.5 2.5 3.7 0.6 5.6C0.3 5.9 0.3 6.4 0.6 6.7L7.4 13.5C7.7 13.8 8.3 13.8 8.6 13.5L15.4 6.7C15.7 6.4 15.7 5.9 15.4 5.6C13.5 3.7 10.9 2.5 8 2.5ZM2.1 6.8C3.7 5.2 5.8 4.2 8 4.2C10.2 4.2 12.3 5.2 13.9 6.8L8 12.7L2.1 6.8Z" fill-rule="evenodd"></path>
+</svg>
+<!-- iOS Battery Icon with Level -->
+<div class="flex items-center">
+<div class="w-[22px] h-[11px] border border-white/90 rounded-[3px] p-[1px] flex items-center">
+<div class="h-full w-full bg-white rounded-[1.5px]"></div>
+</div>
+<div class="w-[1.2px] h-[4px] bg-white/70 rounded-r-[1px] ml-[0.5px]"></div>
+</div>
+</div>
+</header>
+<!-- END: iOSStatusBar -->
+<!-- BEGIN: BrandIdentityCenter -->
+<!-- Main Center Focal Point: Glow, Emblem, Title, Tagline -->
+<main class="relative z-20 flex-1 flex flex-col items-center justify-center px-6 -mt-8" data-purpose="splash-content">
+<!-- Emblem Container with Multi-layer Glow -->
+<div class="relative mb-6 flex items-center justify-center" data-purpose="logo-wrapper">
+<!-- Deep radial violet neon glow -->
+<div class="absolute w-44 h-44 rounded-full bg-gradient-to-tr from-violet-600 to-fuchsia-500 blur-2xl opacity-60 animate-pulse-subtle"></div>
+<!-- Concentric highlight aura ring -->
+<div class="absolute w-36 h-36 rounded-full border border-violet-400/30 blur-[2px]"></div>
+<!-- Official KONSENA AI Logo Asset (Shield Origami Monogram K) -->
+<div class="relative w-40 h-40 md:w-44 md:h-44 flex items-center justify-center bg-transparent"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYbLAsHD4cc_bfUCVEBV9roLNsHxnYO7LxvP-enlaTqnw0K9dV-befzEZvgVeSaZdkaT4Sv9i6OhA06NNZUHhLOm67VX5j2JXDB3RFKAE02RybyGx1lt1kn0OU-UzRbrmwwF_AcupdhKZInA6yGmWFwZSqZMsK2iBilR5TywqV63iCMSbgGFPgpro8RJd_Rmi_pN-0O19gx1aD1vM5P9oANoOiAcH1LT9b_CqIn_mRSEnIEezjLY4e" alt="Konsena AI Logo Shield Origami Monogram" class="w-full h-full object-contain filter drop-shadow-[0_12px_28px_rgba(0,0,0,0.6)] drop-shadow-[0_0_24px_rgba(168,85,247,0.7)]"></div>
+</div>
+<!-- App Brand Title -->
+<div class="text-center mb-3" data-purpose="app-title">
+<h1 class="text-[32px] font-extrabold tracking-tight text-white leading-none">
+          Konsena <span class="bg-gradient-to-r from-violet-400 via-purple-300 to-indigo-300 bg-clip-text text-transparent">AI</span>
+</h1>
+</div>
+<!-- App Value Tagline -->
+<div class="text-center max-w-[270px]" data-purpose="app-tagline">
+<p class="text-[14px] leading-relaxed font-normal text-purple-200/90 tracking-normal drop-shadow-sm">
+          Pahami, Kendalikan, dan Lindungi Data Pribadimu
+        </p>
+</div>
+</main>
+<!-- END: BrandIdentityCenter -->
+<!-- BEGIN: BottomAtmosphereAndIndicators -->
+<!-- Curving planetary horizon hemisphere & Sleek loading bar -->
+<footer class="relative z-10 w-full h-[180px] flex flex-col justify-end items-center pb-2" data-purpose="planetary-footer">
+<!-- Atmospheric Curving Planet Crest -->
+<div class="planetary-horizon">
+<div class="rim-light"></div>
+</div>
+<!-- Minimalist Loading Progress Indicator -->
+<div class="relative z-30 mb-8 flex flex-col items-center" data-purpose="loading-indicator-section">
+<div class="w-32 h-[3.5px] bg-white/20 rounded-full overflow-hidden backdrop-blur-md">
+<div class="w-full h-full bg-gradient-to-r from-transparent via-purple-200 to-white rounded-full animate-progress-slide"></div>
+</div>
+</div>
+<!-- iOS Home Indicator Bar -->
+<div class="relative z-30 mb-2" data-purpose="ios-home-indicator">
+<div class="w-36 h-[5px] bg-white/60 rounded-full"></div>
+</div>
+</footer>
+<!-- END: BottomAtmosphereAndIndicators -->
+</div>
+<!-- END: MobileFrameContainer -->
+
+
+</body></html>

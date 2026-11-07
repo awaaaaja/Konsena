@@ -226,7 +226,7 @@ Suite `supabase/tests/rls_storage_test.sql` — **plan 17, hasil 17 ok / 0 not o
 | `flutter analyze` | **PASS** | `No issues found! (ran in 19.2s)` |
 | `flutter test` | **PASS** | `00:03 +31: All tests passed!` — **31/31** |
 | `flutter build apk --debug` (percobaan 1) | **FAIL** | `java.util.zip.ZipException: zip END header not found` — cache Gradle korup |
-| `flutter build apk --debug` (percobaan 2, setelah cache dibersihkan) | *berjalan saat laporan ditulis* | lihat §8c |
+| `flutter build apk --debug` (percobaan 2, setelah cache dibersihkan) | **PASS** | `✓ Built build/app/outputs/flutter-apk/app-debug.apk` (berjalan ulang pada REVIEW Phase 01A) |
 | `npx supabase start` | **BLOCKED** | runtime kontainer tidak tersedia |
 | `npx supabase db reset` (local) | **NOT_RUN** | tidak pernah diarahkan ke remote |
 | `npx supabase test db` (local) | **NOT_RUN** | mengikuti `supabase start` |
@@ -252,9 +252,9 @@ Suite `supabase/tests/rls_storage_test.sql` — **plan 17, hasil 17 ok / 0 not o
 found` selama ±20 menit. Akar masalah: `~/.gradle/wrapper/dists/gradle-9.3.1-all/.../gradle-9.3.1-all.zip`
 terpotong (121 MB, tanpa berkas `.ok`), diverifikasi `BadZipFile` oleh
 `zipfile.ZipFile`. Perbaikan: hapus cache korup → wrapper mengunduh ulang.
-**Percobaan 2 berjalan saat dokumen ini ditulis** — status akhirnya diperbarui
-di baris yang sama begitu selesai, dan **tidak akan dilaporkan PASS tanpa
-bukti**.
+**Percobaan 2 — PASS.** Build ulang selesai dan menghasilkan
+`build/app/outputs/flutter-apk/app-debug.apk`. Verifikasi terbaru setelah
+perubahan Phase 01A juga PASS (lihat `PHASE_01A_REPORT.md` §4).
 
 ### 8d. Mengapa pgTAP dijalankan lewat klien Node
 

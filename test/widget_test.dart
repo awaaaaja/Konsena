@@ -79,7 +79,10 @@ void main() {
       expect(find.text('KONSENA AI'), findsWidgets);
       // Status copy is rendered by both the status card and the detail block.
       expect(find.text('Mode tamu — cloud belum dikonfigurasi'), findsWidgets);
-      expect(find.textContaining('Tamu (offline)'), findsWidgets);
+      expect(
+        find.textContaining('Mode tamu — tidak ada sesi autentikasi.'),
+        findsWidgets,
+      );
       expect(find.text('Cloud tidak aktif'), findsOneWidget);
       expect(find.byIcon(Icons.cloud_off), findsOneWidget);
     });
@@ -171,7 +174,10 @@ void main() {
       expect(find.text('Cloud terhubung (sinkronisasi opt-in)'), findsWidgets);
       expect(find.byIcon(Icons.cloud_done), findsOneWidget);
       // Sign-in is a Phase 07 opt-in: still a guest after startup.
-      expect(find.textContaining('Tamu (offline)'), findsWidgets);
+      expect(
+        find.textContaining('Mode tamu — tidak ada sesi autentikasi.'),
+        findsWidgets,
+      );
       // Startup still only ever hit the single initializer seam.
       expect(recorder.calls, 1);
     });

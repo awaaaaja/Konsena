@@ -1318,4 +1318,10 @@ Referensi implementasi: `DESIGN_SYSTEM_v2.md`, `KONSENA_THEME.dart`, `color_toke
 - Setiap bottom-tab switch wajib preserve current draft; tombol kembali dari child route harus kembali ke tab asal dan tidak mengganti audit aktif.
 - Selama engine `UnavailableAnalysisEngine`, S29/S30/S31 harus menampilkan ketidaksediaan dengan opsi meninjau sumber, bukan temuan simulasi.
 
+**Implementasi Phase 01B:** indeks §D dipetakan 1:1 di
+`lib/app/navigation/route_registry.dart` dan diverifikasi oleh
+`test/navigation/route_registry_test.dart` + `navigation_test.dart`. Route ID
+dan canonical path tidak berubah; `/account` tetap redirect alias, bukan Screen
+ID. Stateful tab shell berada di `lib/app/navigation/konsena_tab_shell.dart`.
+
 Dokumen eksekusi: `CLAUDE.md` sebagai aturan permanen, `prompts/PHASE_00_REPO_SUPABASE.md` sebagai **prompt eksekusi pertama**, dan satu file prompt terpisah per phase lainnya di `prompts/README.md`. Tidak ada master prompt. Phase 00 menyiapkan Supabase; Phase 07 mengaktifkan sinkronisasi opt-in. Jangan menjalankan semua fase dalam satu sesi.

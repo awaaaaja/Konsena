@@ -1,15 +1,15 @@
 # PHASE_STATUS
 
-Terakhir diperbarui: **2026-11-07** (Phase 00)
+Terakhir diperbarui: **2026-11-08** (Phase 03 device connected; implementation in progress)
 
 | Phase | Nama | Status | Laporan |
 |---|---|---|---|
 | 00 | Setup repo Flutter dan Supabase | **PASS** | [PHASE_00_REPORT.md](PHASE_00_REPORT.md) |
-| 01A | Design system, komponen dasar, aplikasi shell, guest navigation | `NOT_STARTED` | — |
-| 01B | Data lokal (Drift), audit draft, navigasi utama, offline state | `NOT_STARTED` | — |
-| 01C | Aksesibilitas, empty/loading/error/denied states, test coverage dasar | `NOT_STARTED` | — |
-| 02 | Import dokumen & policy, segmentasi, review editor | `NOT_STARTED` | — |
-| 03 | Audit izin aplikasi (PackageManager), detail izin, sumber | `NOT_STARTED` | — |
+| 01A | Design system, komponen dasar, aplikasi shell, guest navigation | **PASS** | [PHASE_01A_REPORT.md](PHASE_01A_REPORT.md) |
+| 01B | Navigasi lima tab, route registry S00–S39, draft-safe shell | **PASS — headed browser visual check** | [PHASE_01B_REPORT.md](PHASE_01B_REPORT.md) |
+| 01C | Aksesibilitas, responsive states, visual QA | **PASS — device/TalkBack ditunda; NOT_RUN** | [PHASE_01C_REPORT.md](PHASE_01C_REPORT.md) |
+| 02 | Domain data, penyimpanan lokal, dan audit workspace | **PASS — automated gate; device/manual checks NOT_RUN** | [PHASE_02_REPORT.md](PHASE_02_REPORT.md) |
+| 03 | Audit izin aplikasi (PackageManager), detail izin, sumber | **IN_PROGRESS — SM-A556E / API 36 connected; device acceptance pending** | [PHASE_03_REPORT.md](PHASE_03_REPORT.md) |
 | 04 | Policy scanner manual + evidence map | `NOT_STARTED` | — |
 | 05 | LiveScan kamera, OCR fallback, gap review | `NOT_STARTED` | — |
 | 06 | Dark pattern screenshot, manual annotations, report local | `NOT_STARTED` | — |
@@ -42,7 +42,7 @@ Bukti inti yang **sudah** dijalankan:
 - pgTAP terhadap hosted `yjaerikykirxekukqfwu` → **38/38 + 17/17 = 55/55**
 - `supabase db push --remote` → `Finished supabase db push.`, history tercatat
 
-**Gate lanjut:** `NEXT: 01A`.
+**Gate lanjut:** Phase 01B/01C berstatus **PASS**; pemeriksaan TalkBack/device ditunda atas arahan operator dan tetap tercatat `NOT_RUN`. Phase 02 tetap `NOT_STARTED` dan tidak dimulai dalam lingkup pekerjaan ini.
 
 **Prasyarat sebelum Phase 07** (belum terpenuhi):
 
