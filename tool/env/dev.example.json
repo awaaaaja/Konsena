@@ -1,0 +1,9 @@
+{
+  "_comment": "PLACEHOLDERS ONLY. Copy this file to tool/env/dev.json (which is git-ignored) and fill in your own values, then build with: flutter run --dart-define-from-file=tool/env/dev.json",
+  "_security": "Never put service_role, sb_secret_*, database password, personal access token, or JWT signing secrets in this file. Those belong in a credential manager or the Supabase CLI, never in the app or in Git.",
+  "SUPABASE_URL": "https://YOUR_PROJECT_REF.supabase.co",
+  "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_REPLACE_WITH_YOUR_PUBLISHABLE_KEY",
+  "ENABLE_CLOUD_SYNC": false,
+  "ENABLE_ML": false,
+  "ENABLE_DEMO": false
+}
