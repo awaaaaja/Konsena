@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../data/audit/audit_repository.dart';
 import '../../../domain/audit/audit_entities.dart';
 import '../../../theme/konsena_spacing.dart';
+import '../../scan/presentation/scan_audit_target.dart';
+import '../../shared/widgets/konsena_back_button.dart';
+import 'audit_summary_panel.dart';
 import 'audit_workspace_cubit.dart';
 
 class AuditWorkspacePage extends StatelessWidget {
@@ -42,81 +44,19 @@ class _WorkspaceBody extends StatelessWidget {
   final String auditId;
   final Future<void> Function()? onAuditDeleted;
 
-  Future<void> _pickSource(
-    BuildContext context,
-    AuditWorkspaceCubit cubit,
-  ) async {
-    PlatformFile? file;
-    try {
-      file = await FilePicker.pickFile();
-    } on Object {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Pemilih file tidak dapat dibuka.')),
-        );
-      }
-      return;
-    }
-    if (file == null) return;
-    final length = await file.length();
-    if (length == null || length <= 0 || length > 25 * 1024 * 1024) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'File kosong, terlalu besar (maksimum 25 MB), atau tidak dapat dibaca.',
-            ),
-          ),
-        );
-      }
-      return;
-    }
-    final bytes = await file.readAsBytes();
-    if (!context.mounted) return;
-    final ext = file.extension?.toLowerCase() ?? '';
-    final type = ext == 'png' || ext == 'jpg' || ext == 'jpeg'
-        ? AuditSourceType.consentUi
-        : await _chooseDocumentType(context);
-    if (type == null || !context.mounted) return;
-    await cubit.attach(
-      bytes: bytes,
-      type: type,
-      mediaType: _mediaType(ext),
-      originalName: file.name,
-    );
-  }
-
-  Future<AuditSourceType?> _chooseDocumentType(BuildContext context) =>
-      showDialog<AuditSourceType>(
-        context: context,
-        builder: (dialogContext) => SimpleDialog(
-          title: const Text('Pilih jenis sumber'),
-          children: [
-            for (final item in const [
-              (AuditSourceType.privacyPolicy, 'Privacy Policy'),
-              (AuditSourceType.terms, 'Terms of Service'),
-              (AuditSourceType.otherDocument, 'Dokumen lain / belum tahu'),
-            ])
-              SimpleDialogOption(
-                onPressed: () => Navigator.pop(dialogContext, item.$1),
-                child: Text(item.$2),
-              ),
-          ],
-        ),
-      );
-
   Future<void> _editName(
     BuildContext context,
     AuditWorkspaceCubit cubit,
     String current,
   ) async {
-    final controller = TextEditingController(text: current);
+    var name = current;
     final value = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Ubah nama audit'),
-        content: TextField(
-          controller: controller,
+        content: TextFormField(
+          initialValue: current,
+          onChanged: (value) => name = value,
           maxLength: 60,
           autofocus: true,
           decoration: const InputDecoration(labelText: 'Nama audit'),
@@ -127,23 +67,14 @@ class _WorkspaceBody extends StatelessWidget {
             child: const Text('Batal'),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, controller.text),
+            onPressed: () => Navigator.pop(dialogContext, name),
             child: const Text('Simpan'),
           ),
         ],
       ),
     );
-    controller.dispose();
     if (value != null && context.mounted) await cubit.rename(value);
   }
-
-  String _mediaType(String ext) => switch (ext) {
-    'pdf' => 'application/pdf',
-    'txt' => 'text/plain',
-    'png' => 'image/png',
-    'jpg' || 'jpeg' => 'image/jpeg',
-    _ => 'application/octet-stream',
-  };
 
   @override
   Widget build(
@@ -177,6 +108,7 @@ class _WorkspaceBody extends StatelessWidget {
       final session = state.session!;
       return Scaffold(
         appBar: AppBar(
+          leading: const KonsenaBackButton(fallback: '/history'),
           title: const Text('Workspace audit'),
           actions: [
             IconButton(
@@ -225,9 +157,11 @@ class _WorkspaceBody extends StatelessWidget {
         body: ListView(
           padding: const EdgeInsets.all(KonsenaSpacing.lg),
           children: [
-            Text(
-              session.name,
-              style: Theme.of(context).textTheme.headlineSmall,
+            AuditSummaryPanel(
+              name: session.name,
+              sources: state.sources,
+              snapshotCount: state.snapshots.length,
+              updatedAt: session.updatedAt,
             ),
             const SizedBox(height: KonsenaSpacing.xs),
             Text(
@@ -242,16 +176,25 @@ class _WorkspaceBody extends StatelessWidget {
             ],
             const SizedBox(height: KonsenaSpacing.md),
             FilledButton.icon(
-              onPressed: state.busy ? null : () => _pickSource(context, cubit),
-              icon: const Icon(Icons.attach_file),
-              label: const Text('Lampirkan sumber lokal'),
+              onPressed: state.busy
+                  ? null
+                  : () => context.push(scanLocation('/scan', auditId)),
+              icon: const Icon(Icons.document_scanner_outlined),
+              label: const Text('Pindai sumber'),
             ),
             const SizedBox(height: KonsenaSpacing.xs),
+            OutlinedButton.icon(
+              onPressed: state.busy
+                  ? null
+                  : () => context.push('/audit/apps?auditId=$auditId'),
+              icon: const Icon(Icons.apps),
+              label: const Text('Tambah snapshot izin Android'),
+            ),
             const Text(
               'File dan teks sensitif dienkripsi AES-GCM di penyimpanan privat aplikasi. Data tidak dikirim ke cloud.',
             ),
             const SizedBox(height: KonsenaSpacing.md),
-            if (state.sources.isEmpty)
+            if (state.sources.isEmpty && state.snapshots.isEmpty)
               const Card(
                 child: ListTile(
                   leading: Icon(Icons.folder_open_outlined),
@@ -261,6 +204,22 @@ class _WorkspaceBody extends StatelessWidget {
                   ),
                 ),
               ),
+            for (final snapshot in state.snapshots)
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.android),
+                  title: Text(snapshot.appLabel),
+                  subtitle: Text(
+                    '${snapshot.packageName} · versi ${snapshot.versionName ?? "unknown"} · snapshot ${snapshot.capturedAt.toLocal()} · ${snapshot.snapshotStatus}',
+                  ),
+                  onTap: () => context.push(
+                    '/audit/apps/${snapshot.packageName}?auditId=$auditId',
+                  ),
+                ),
+              ),
+            const Text(
+              'Association dipilih pengguna. Tanggal/versi berbeda perlu ditinjau; tidak ada pencocokan otomatis.',
+            ),
             for (final source in state.sources)
               Card(
                 child: ListTile(
@@ -270,48 +229,72 @@ class _WorkspaceBody extends StatelessWidget {
                         : Icons.description_outlined,
                   ),
                   title: Text(source.originalName ?? _sourceLabel(source.type)),
+                  onTap:
+                      source.type == AuditSourceType.privacyPolicy ||
+                          source.type == AuditSourceType.terms ||
+                          source.type == AuditSourceType.otherDocument
+                      ? () => context.push('/scan/review/${source.id}')
+                      : () => context.push(
+                          '/consent-ui/review?auditId=$auditId&sourceId=${source.id}',
+                        ),
                   subtitle: Text(
-                    '${_reviewLabel(source.reviewStatus)} · SHA-256 ${source.sha256.substring(0, 12)}… · ${source.byteLength} byte',
+                    '${_sourceLabel(source.type)} · ${_reviewLabel(source.reviewStatus)}'
+                    '${source.reviewStatus == SourceReviewStatus.reviewed ? '' : '\nKetuk untuk lanjutkan review'}',
                   ),
                   trailing: IconButton(
-                    tooltip: source.reviewStatus == SourceReviewStatus.reviewed
-                        ? 'Lepas sumber'
-                        : 'Tandai sudah ditinjau',
+                    tooltip: 'Hapus sumber',
                     onPressed: state.busy
                         ? null
-                        : () =>
-                              source.reviewStatus == SourceReviewStatus.reviewed
-                              ? cubit.detach(source.id)
-                              : cubit.setReviewed(source.id),
-                    icon: Icon(
-                      source.reviewStatus == SourceReviewStatus.reviewed
-                          ? Icons.link_off
-                          : Icons.check_circle_outline,
-                    ),
+                        : () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (dialogContext) => AlertDialog(
+                                title: const Text('Hapus sumber lokal?'),
+                                content: const Text(
+                                  'Sumber, segmen, evidence dan revisi terkait akan dihapus. Salinan yang sudah dibagikan ke aplikasi lain tidak ikut terhapus.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(dialogContext, false),
+                                    child: const Text('Batal'),
+                                  ),
+                                  FilledButton(
+                                    onPressed: () =>
+                                        Navigator.pop(dialogContext, true),
+                                    child: const Text('Hapus'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirmed == true) {
+                              await cubit.detach(source.id);
+                            }
+                          },
+                    icon: const Icon(Icons.delete_outline),
                   ),
                 ),
               ),
             const SizedBox(height: KonsenaSpacing.md),
+            if (state.sources.any(
+              (source) =>
+                  source.type == AuditSourceType.consentUi &&
+                  source.reviewStatus == SourceReviewStatus.reviewed,
+            ))
+              OutlinedButton.icon(
+                onPressed: () => context.push('/audit/$auditId/dark-pattern'),
+                icon: const Icon(Icons.fact_check_outlined),
+                label: const Text('Review antarmuka'),
+              ),
             OutlinedButton.icon(
-              onPressed: () async {
-                await repository.addUnavailableAnalysis(
-                  auditId: auditId,
-                  sourceIds: state.sources
-                      .map((s) => s.id)
-                      .toList(growable: false),
-                );
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Analisis belum tersedia: model on-device belum dipasang.',
-                      ),
-                    ),
-                  );
-                }
-              },
+              onPressed: () => context.push('/audit/$auditId/results'),
               icon: const Icon(Icons.info_outline),
               label: const Text('Lihat status analisis'),
+            ),
+            OutlinedButton.icon(
+              onPressed: () => context.push('/audit/$auditId/report'),
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              label: const Text('Preview dan ekspor laporan'),
             ),
           ],
         ),

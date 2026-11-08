@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../shared/widgets/konsena_back_button.dart';
+
 import 'package:go_router/go_router.dart';
 
 import '../../../theme/konsena_spacing.dart';
@@ -49,17 +52,19 @@ class _AppPickerPageState extends State<AppPickerPage> {
         _loading = false;
       });
     } on PermissionInspectorException catch (error) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = error.message;
           _loading = false;
         });
+      }
     } on Object {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = 'Daftar aplikasi tidak tersedia.';
           _loading = false;
         });
+      }
     }
   }
 
@@ -75,6 +80,7 @@ class _AppPickerPageState extends State<AppPickerPage> {
         .toList(growable: false);
     return Scaffold(
       appBar: AppBar(
+        leading: const KonsenaBackButton(fallback: '/audit/new'),
         title: const Text('Pilih Aplikasi'),
         actions: [
           IconButton(
@@ -101,7 +107,7 @@ class _AppPickerPageState extends State<AppPickerPage> {
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: KonsenaSpacing.sm),
-          if (_loading) const LinearProgressIndicator(),
+          if (_loading) const Text('Memuat daftar aplikasi…'),
           if (_error != null) ...[
             const SizedBox(height: KonsenaSpacing.md),
             Text(

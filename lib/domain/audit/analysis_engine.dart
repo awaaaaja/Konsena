@@ -7,24 +7,30 @@ class EngineCapabilities {
   final String reason;
 }
 
-class AnalysisUnavailable {
-  const AnalysisUnavailable({required this.reason});
+enum AnalysisOutcome { result, insufficientSources, unavailable, error }
+
+class AnalysisResult {
+  const AnalysisResult({required this.outcome, required this.reason});
+  final AnalysisOutcome outcome;
   final String reason;
+}
+
+class AnalysisUnavailable extends AnalysisResult {
+  const AnalysisUnavailable({required super.reason})
+    : super(outcome: AnalysisOutcome.unavailable);
 }
 
 abstract interface class AnalysisEngine {
   EngineCapabilities capabilities();
 
-  Future<AnalysisUnavailable> classifyPolicy({required String sourceId});
+  Future<AnalysisResult> classifyPolicy({required String sourceId});
 
-  Future<AnalysisUnavailable> analyzeConsentGap({
-    required List<String> sourceIds,
-  });
+  Future<AnalysisResult> analyzeConsentGap({required List<String> sourceIds});
 
-  Future<AnalysisUnavailable> detectDarkPatterns({required String sourceId});
+  Future<AnalysisResult> detectDarkPatterns({required String sourceId});
 
   /// Generic future-facing seam for other model-backed audit tasks.
-  Future<AnalysisUnavailable> analyze({required List<String> sourceIds});
+  Future<AnalysisResult> analyze({required List<String> sourceIds});
 }
 
 /// Honest provider until the evaluated on-device model is integrated.

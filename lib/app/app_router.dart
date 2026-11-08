@@ -18,10 +18,16 @@ import '../features/shared/widgets/unknown_route_page.dart';
 import '../features/splash/presentation/splash_page.dart';
 import '../features/permission_inspector/presentation/app_picker_page.dart';
 import '../features/permission_inspector/presentation/app_permission_detail_page.dart';
+import '../features/policy_import/presentation/policy_import_pages.dart';
+import '../features/live_scan/presentation/live_scan_pages.dart';
+import '../features/live_scan/domain/live_scan_stitcher.dart';
 import 'navigation/audit_draft_store.dart';
 import 'navigation/konsena_tab_shell.dart';
 import 'navigation/route_registry.dart';
 import '../data/audit/audit_repository.dart';
+import '../features/consent_ui/presentation/screenshot_pages.dart';
+import '../features/audit/presentation/audit_detail_pages.dart';
+import '../features/settings/presentation/data_controls_page.dart';
 
 /// Builds the canonical S00–S39 route graph and retained five-tab shell.
 GoRouter createAppRouter({
@@ -44,6 +50,17 @@ GoRouter createAppRouter({
           !(isAuthenticated && syncOptIn)) {
         return '/profile?notice=sync_requires_opt_in';
       }
+      if (auditRepository != null &&
+          (spec.id == ScreenId.s08 || spec.id == ScreenId.s09)) {
+        final auditId = state.uri.queryParameters['auditId'];
+        if (auditId == null) return '/scan/camera/how-to';
+        return auditRepository
+            .get(auditId)
+            .then(
+              (audit) => audit == null ? '/scan/camera/how-to' : null,
+              onError: (Object _, StackTrace _) => '/scan/camera/how-to',
+            );
+      }
       return null;
     },
     builder: (context, state) {
@@ -56,16 +73,136 @@ GoRouter createAppRouter({
               : () => context.read<HomeCubit>().loadSummary(),
         );
       }
-      if (spec.id == ScreenId.s06) return const ScanHubPage();
-      if (spec.id == ScreenId.s04) {
-        return AppPickerPage(
+      if (spec.id == ScreenId.s06) {
+        return ScanHubPage(auditId: state.uri.queryParameters['auditId']);
+      }
+      if (spec.id == ScreenId.s36) {
+        return DataControlsPage(repository: auditRepository);
+      }
+      if (spec.id == ScreenId.s12) {
+        return ScreenshotImportPage(
+          auditId: state.uri.queryParameters['auditId'],
+          repository: auditRepository,
+        );
+      }
+      if (spec.id == ScreenId.s13) {
+        return ScreenshotReviewPage(
+          auditId: state.uri.queryParameters['auditId'],
+          sourceId: state.uri.queryParameters['sourceId'],
+          repository: auditRepository,
+        );
+      }
+      const detailModes = {
+        ScreenId.s15: 'results',
+        ScreenId.s16: 'evidence',
+        ScreenId.s17: 'actions',
+        ScreenId.s18: 'report',
+        ScreenId.s29: 'compare',
+        ScreenId.s30: 'risk',
+        ScreenId.s31: 'dark-pattern',
+        ScreenId.s32: 'action',
+        ScreenId.s33: 'export',
+        ScreenId.s34: 'history',
+        ScreenId.s38: 'source-match',
+      };
+      if (auditRepository != null &&
+          detailModes.containsKey(spec.id) &&
+          RouteRegistry.validateParameters(spec, state.pathParameters) ==
+              null) {
+        return AuditDetailPage(
+          auditId:
+              state.pathParameters['id'] ?? state.pathParameters['auditId']!,
+          mode: detailModes[spec.id]!,
+          itemId:
+              state.pathParameters['evidenceId'] ??
+              state.pathParameters['actionId'],
+          repository: auditRepository,
+        );
+      }
+      if (spec.id == ScreenId.s07) {
+        return PolicyImportPage(
+          auditId: state.uri.queryParameters['auditId'],
+          type: state.uri.queryParameters['type'],
+          sourceUrl: state.uri.queryParameters['url'],
+          documentVersion: state.uri.queryParameters['version'],
+          repository: auditRepository,
+        );
+      }
+      if (spec.id == ScreenId.s11) {
+        return PolicyReviewPage(
+          sourceId: state.pathParameters['docId'],
+          repository: auditRepository,
+        );
+      }
+      if (spec.id == ScreenId.s39) {
+        return LiveScanTutorialPage(
+          auditId: state.uri.queryParameters['auditId'],
+          repository: auditRepository,
+        );
+      }
+      if (spec.id == ScreenId.s08) {
+        return LiveScanPermissionPage(
           auditId: state.uri.queryParameters['auditId'],
         );
       }
+      if (spec.id == ScreenId.s09) {
+        return LiveScanCapturePage(
+          auditId: state.uri.queryParameters['auditId'],
+        );
+      }
+      if (spec.id == ScreenId.s10) {
+        final result = state.extra;
+        if (result is LiveScanResult) {
+          return LiveScanMergePage(
+            result: result,
+            auditId: state.uri.queryParameters['auditId'],
+            repository: auditRepository,
+          );
+        }
+      }
+      if (spec.id == ScreenId.s27 && state.extra is LiveScanResult) {
+        return LiveScanGapReviewPage(result: state.extra! as LiveScanResult);
+      }
+      if (spec.id == ScreenId.s35) {
+        return LiveScanPermissionRecoveryPage(
+          auditId: state.uri.queryParameters['auditId'],
+        );
+      }
+      if (spec.id == ScreenId.s25) {
+        return PolicyDocumentTypePage(
+          auditId: state.uri.queryParameters['auditId'],
+          repository: auditRepository,
+        );
+      }
+      if (spec.id == ScreenId.s26) {
+        return PolicyImportProgressPage(
+          request: state.extra is PolicyImportRequest
+              ? state.extra! as PolicyImportRequest
+              : null,
+          repository: auditRepository,
+        );
+      }
+      if (spec.id == ScreenId.s28) {
+        return PolicyDocumentReadPage(
+          sourceId: state.pathParameters['docId'],
+          repository: auditRepository,
+        );
+      }
+      if (spec.id == ScreenId.s04) {
+        return AppPickerPage(auditId: state.uri.queryParameters['auditId']);
+      }
       if (spec.id == ScreenId.s05) {
         final packageName = state.pathParameters['package'];
-        if (packageName == null) {
-          return const UnknownRoutePage(location: 'missing package');
+        if (packageName == null ||
+            RouteRegistry.validateParameters(spec, state.pathParameters) !=
+                null) {
+          return RouteScreenPage(
+            spec: spec,
+            parameters: state.pathParameters,
+            drafts: drafts,
+            queryAuditId: state.uri.queryParameters['auditId'],
+            auditRepository: auditRepository,
+          );
         }
         return AppPermissionDetailPage(
           packageName: packageName,

@@ -1,0 +1,13 @@
+{
+  "labels": [
+    "entailment",
+    "neutral",
+    "contradiction"
+  ],
+  "id2label": {
+    "0": "entailment",
+    "1": "neutral",
+    "2": "contradiction"
+  },
+  "formulation": "single_label_classification"
+}

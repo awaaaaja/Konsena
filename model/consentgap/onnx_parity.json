@@ -1,0 +1,8 @@
+{
+  "max_abs_diff": 0.20694082975387573,
+  "prediction_agreement": 0.6,
+  "samples": 10,
+  "max_abs_diff_gate": 0.001,
+  "min_agreement_gate": 0.99,
+  "pass": false
+}

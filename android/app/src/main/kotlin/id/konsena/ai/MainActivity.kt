@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.content.pm.PermissionInfo
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -27,6 +26,8 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        ReportBridge(this, flutterEngine.dartExecutor.binaryMessenger)
+        QaOnnxBridge(this, flutterEngine.dartExecutor.binaryMessenger)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channelName)
             .setMethodCallHandler { call, result ->
                 try {
@@ -57,6 +58,8 @@ class MainActivity : FlutterActivity() {
                     result.error("NOT_VISIBLE", "Package information is not visible to this app", null)
                 } catch (error: PackageManager.NameNotFoundException) {
                     result.error("PACKAGE_NOT_FOUND", "The selected package is no longer installed", null)
+                } catch (error: ActivityNotFoundException) {
+                    result.error("ACTIVITY_UNAVAILABLE", "App details Settings activity is unavailable", null)
                 } catch (error: Exception) {
                     result.error("UNKNOWN", "Android permission inspection failed", null)
                 }
@@ -72,7 +75,7 @@ class MainActivity : FlutterActivity() {
         packageManager.queryIntentActivities(launcherIntent(), 0)
     }
 
-    private fun listVisibleLaunchableApps(includeSystem: Boolean): Map<String, Any> {
+    private fun listVisibleLaunchableApps(includeSystem: Boolean): Map<String, Any?> {
         val apps = visibleLaunchables()
             .mapNotNull { it.activityInfo?.applicationInfo }
             .filter { it.packageName != packageName }
@@ -118,10 +121,6 @@ class MainActivity : FlutterActivity() {
         val requested = info.requestedPermissions ?: emptyArray()
         val grantFlags = info.requestedPermissionsFlags ?: IntArray(0)
         val permissionEntries = requested.mapIndexed { index, permissionName ->
-            val hasGrantFlag = index < grantFlags.size
-            val granted = if (hasGrantFlag) {
-                (grantFlags[index] and PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0
-            } else null
             var protectionLevel: Int? = null
             var label: String? = null
             try {
@@ -132,21 +131,18 @@ class MainActivity : FlutterActivity() {
             } catch (_: Exception) {
                 // Permission labels/protection metadata may be unavailable due to OS visibility.
             }
-            val isDangerous = protectionLevel != null &&
-                (protectionLevel and 0xF) == PermissionInfo.PROTECTION_DANGEROUS
-            val status = when {
-                granted == true -> "declared_granted"
-                granted == false && isDangerous -> "declared_not_granted"
-                granted == false -> "non_runtime_or_unknown"
-                else -> "unavailable"
-            }
+            val grant = PermissionStatusMapper.fromRequestedFlags(
+                grantFlags,
+                index,
+                protectionLevel,
+            )
             mapOf(
                 "name" to permissionName,
                 "label" to label,
-                "granted" to granted,
-                "statusCode" to status,
+                "granted" to grant.granted,
+                "statusCode" to grant.statusCode,
                 "protectionLevel" to protectionLevel,
-                "flagsAvailable" to hasGrantFlag,
+                "flagsAvailable" to grant.flagsAvailable,
             )
         }
         val app = info.applicationInfo
@@ -173,7 +169,7 @@ class MainActivity : FlutterActivity() {
             startActivity(intent)
             mapOf("opened" to true, "fallbackUsed" to false)
         } catch (_: ActivityNotFoundException) {
-            mapOf("opened" to false, "fallbackUsed" to false)
+            throw ActivityNotFoundException("App details Settings activity is unavailable")
         }
     }
 }

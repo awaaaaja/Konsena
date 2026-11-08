@@ -1,0 +1,14 @@
+{
+  "tokenizer": "HuggingFace fast tokenizer JSON",
+  "max_length": 192,
+  "truncation": "longest_first",
+  "padding": "max_length",
+  "return_token_type_ids": false,
+  "text_pair_order": [
+    "policy_text",
+    "permission_text"
+  ],
+  "policy_input_template": "Status pemeriksaan dokumen: {policy_scan_status}. Kutipan kebijakan: {policy_excerpt}",
+  "permission_input_template": "Izin Android: {permission}. Status izin: {permission_status}. Pernyataan tujuan: {permission_statement}",
+  "wordpiece_implementation": "Honor tokenizer.json normalizer/post_processor; preserve Unicode and case"
+}

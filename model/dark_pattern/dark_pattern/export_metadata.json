@@ -1,0 +1,8 @@
+{
+  "run": "/kaggle/working/konsena_tuning/onnx_candidates/artifacts/training/darkpattern_student",
+  "task": "darkpattern",
+  "fp32_file": "dark_pattern_fp32.onnx",
+  "sha256": "62a274110e7b70a34872b357c7091fbf2f442f9d62cf5cd2fb0afd3a1b901229",
+  "profile": "FULL_TRAINING",
+  "release_eligible": true
+}

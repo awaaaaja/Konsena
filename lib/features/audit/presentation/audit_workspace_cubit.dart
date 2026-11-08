@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/audit/audit_repository.dart';
@@ -9,6 +11,7 @@ class AuditWorkspaceState {
     this.busy = false,
     this.session,
     this.sources = const [],
+    this.snapshots = const [],
     this.error,
   });
 
@@ -16,6 +19,7 @@ class AuditWorkspaceState {
   final bool busy;
   final AuditSession? session;
   final List<DocumentSource> sources;
+  final List<ApplicationSnapshotRecord> snapshots;
   final String? error;
 
   AuditWorkspaceState copyWith({
@@ -23,6 +27,7 @@ class AuditWorkspaceState {
     bool? busy,
     AuditSession? session,
     List<DocumentSource>? sources,
+    List<ApplicationSnapshotRecord>? snapshots,
     String? error,
     bool clearError = false,
     bool clearSession = false,
@@ -31,13 +36,22 @@ class AuditWorkspaceState {
     busy: busy ?? this.busy,
     session: clearSession ? null : session ?? this.session,
     sources: sources ?? this.sources,
+    snapshots: snapshots ?? this.snapshots,
     error: clearError ? null : error ?? this.error,
   );
 }
 
 class AuditWorkspaceCubit extends Cubit<AuditWorkspaceState> {
   AuditWorkspaceCubit(this._repository, this.auditId)
-    : super(const AuditWorkspaceState());
+    : super(const AuditWorkspaceState()) {
+    _changes = _repository.changes.listen((_) => load());
+  }
+  StreamSubscription<void>? _changes;
+  @override
+  Future<void> close() async {
+    await _changes?.cancel();
+    await super.close();
+  }
 
   final AuditRepository _repository;
   final String auditId;
@@ -45,22 +59,33 @@ class AuditWorkspaceCubit extends Cubit<AuditWorkspaceState> {
   Future<void> load() async {
     try {
       final session = await _repository.get(auditId);
+      if (isClosed) return;
       if (session == null) {
         emit(
-          state.copyWith(loading: false, error: 'Sesi audit tidak ditemukan.'),
+          state.copyWith(
+            loading: false,
+            clearSession: true,
+            sources: [],
+            snapshots: [],
+            error: 'Sesi audit tidak ditemukan.',
+          ),
         );
         return;
       }
       final sources = await _repository.sources(auditId);
+      final snapshots = await _repository.applicationSnapshots(auditId);
+      if (isClosed) return;
       emit(
         state.copyWith(
           loading: false,
           session: session,
           sources: sources,
+          snapshots: snapshots,
           clearError: true,
         ),
       );
     } on Object {
+      if (isClosed) return;
       emit(
         state.copyWith(
           loading: false,

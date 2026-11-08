@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../shared/widgets/konsena_back_button.dart';
 
 import '../../../data/audit/audit_repository.dart';
 import '../../../domain/audit/audit_entities.dart';
@@ -30,6 +33,7 @@ class _AppPermissionDetailPageState extends State<AppPermissionDetailPage>
   late final PermissionInspectorPlatform _inspector =
       widget.inspector ?? MethodChannelPermissionInspector();
   ApplicationPermissionSnapshot? _snapshot;
+  ApplicationSnapshotRecord? _previousSnapshot;
   String? _error;
   bool _loading = true;
   bool _saving = false;
@@ -69,21 +73,40 @@ class _AppPermissionDetailPageState extends State<AppPermissionDetailPage>
       if (!mounted) return;
       setState(() {
         _snapshot = snapshot;
+        _previousSnapshot = null;
         _loading = false;
       });
       await _persist(snapshot);
     } on PermissionInspectorException catch (error) {
-      if (mounted)
+      final auditId = widget.auditId;
+      final repository = widget.repository;
+      ApplicationSnapshotRecord? previous;
+      if (auditId != null && repository != null) {
+        try {
+          previous = (await repository.applicationSnapshots(auditId))
+              .cast<ApplicationSnapshotRecord?>()
+              .firstWhere(
+                (record) => record?.packageName == widget.packageName,
+                orElse: () => null,
+              );
+        } on Object {
+          // Keep the native error visible even if historical lookup is unavailable.
+        }
+      }
+      if (mounted) {
         setState(() {
           _error = _errorCopy(error);
+          _previousSnapshot = previous;
           _loading = false;
         });
+      }
     } on Object {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _error = 'Snapshot izin tidak dapat dimuat.';
           _loading = false;
         });
+      }
     }
   }
 
@@ -110,6 +133,9 @@ class _AppPermissionDetailPageState extends State<AppPermissionDetailPage>
                 packageName: snapshot.packageName,
                 permissionName: permission.name,
                 grantStatus: permission.status.code,
+                permissionLabel: permission.label,
+                granted: permission.granted,
+                flagsAvailable: permission.flagsAvailable,
                 androidSdk: snapshot.androidSdk,
                 protectionLevel: permission.protectionLevel?.toString(),
                 capturedAt: snapshot.capturedAt,
@@ -145,16 +171,22 @@ class _AppPermissionDetailPageState extends State<AppPermissionDetailPage>
         _returnedFromSettings = true;
       }
     } on PermissionInspectorException catch (error) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(_errorCopy(error))));
+      }
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Settings Android tidak dapat dibuka.')),
+        );
+      }
     }
   }
 
   String _errorCopy(PermissionInspectorException error) => switch (error.code) {
     'PACKAGE_NOT_FOUND' => 'Aplikasi sudah tidak terpasang. Snapshot lama, jika ada, bukan status terkini.',
-    'NOT_VISIBLE' =>
-      'Package tidak terlihat dalam cakupan launcher yang diizinkan Android.',
+    'NOT_VISIBLE' => 'Package tidak terlihat dalam cakupan launcher Android; aplikasi mungkin dihapus atau tidak terlihat.',
     'ACTIVITY_UNAVAILABLE' =>
       'Halaman Settings aplikasi tidak tersedia pada perangkat ini.',
     'SDK_UNSUPPORTED' =>
@@ -172,6 +204,7 @@ class _AppPermissionDetailPageState extends State<AppPermissionDetailPage>
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
+      leading: const KonsenaBackButton(fallback: '/audit/apps'),
       title: const Text('Detail Izin Aplikasi'),
       actions: [
         IconButton(
@@ -198,8 +231,13 @@ class _AppPermissionDetailPageState extends State<AppPermissionDetailPage>
           icon: const Icon(Icons.settings_outlined),
           label: const Text('Buka Settings Android'),
         ),
-        if (_loading) const LinearProgressIndicator(),
+        if (_loading) const Text('Memuat snapshot izin…'),
         if (_saving) const Text('Menyimpan snapshot lokal…'),
+        if (widget.auditId != null)
+          FilledButton(
+            onPressed: () => context.go('/audit/${widget.auditId}/sources'),
+            child: const Text('Lanjut ke workspace audit'),
+          ),
         if (_error != null) ...[
           const SizedBox(height: KonsenaSpacing.md),
           Text(
@@ -211,6 +249,28 @@ class _AppPermissionDetailPageState extends State<AppPermissionDetailPage>
             icon: const Icon(Icons.refresh),
             label: const Text('Coba lagi'),
           ),
+          if (_previousSnapshot case final previous?) ...[
+            const SizedBox(height: KonsenaSpacing.md),
+            Text(
+              'Snapshot tersimpan — historis, bukan status terkini',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Text(
+              'Diambil: ${previous.capturedAt.toLocal()} · API ${previous.androidSdk}',
+            ),
+            for (final permission in previous.permissions)
+              ListTile(
+                title: Text(
+                  permission.permissionLabel ?? permission.permissionName,
+                ),
+                subtitle: Text(permission.permissionName),
+                trailing: Text(
+                  _statusLabel(
+                    PermissionFactStatus.fromCode(permission.grantStatus),
+                  ),
+                ),
+              ),
+          ],
         ],
         if (_snapshot case final snapshot?) ...[
           const SizedBox(height: KonsenaSpacing.md),

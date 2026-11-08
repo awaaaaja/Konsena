@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../theme/konsena_spacing.dart';
+import '../../shared/widgets/konsena_back_button.dart';
 
 /// S20 — settings entry points; destructive operations are not simulated.
 class SettingsPage extends StatelessWidget {
@@ -9,7 +10,10 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Pengaturan')),
+    appBar: AppBar(
+      leading: const KonsenaBackButton(fallback: '/profile'),
+      title: const Text('Pengaturan'),
+    ),
     body: ListView(
       padding: const EdgeInsets.all(KonsenaSpacing.md),
       children: [
@@ -32,7 +36,7 @@ class SettingsPage extends StatelessWidget {
           title: 'Akun',
           detail: 'Login bersifat opsional.',
           icon: Icons.person_outline_rounded,
-          onTap: () => context.push('/profile'),
+          onTap: () => context.go('/profile'),
         ),
         _SettingsLink(
           title: 'Sinkronisasi',

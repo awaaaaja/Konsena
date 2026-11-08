@@ -1,6 +1,6 @@
 # KNOWN_ISSUES — KONSENA AI
 
-Diperbarui: 2026-11-08 (Phase 03 device recheck)
+Diperbarui 2026-11-08 untuk Phase 06 Terpadu.
 Aturan: isu tidak disembunyikan. Setiap entri memuat severity, gejala,
 reproduksi, solusi/owner, dan status.
 
@@ -33,11 +33,15 @@ the process-local JDK 17 workaround (`JAVA_HOME=$HOME/develop/jdk17`); no
 shell-profile change was made. Manual/device workflow and TalkBack remain
 NOT_RUN; Phase 03 remains NOT_STARTED.
 
-**Review Phase 03 READ:** Phase 02 prerequisite is PASS. The first ADB probe
-returned no targets; after operator connection, ADB sees Samsung SM-A556E,
-Android API 36 (serial recorded in the phase report). Device acceptance remains
-pending implementation and manual comparison. The earlier environment blocker
-is resolved; phase is IN_PROGRESS, not passed.
+**Review Phase 03:** Phase 02 prerequisite is PASS. Latest implementation is
+installed on Samsung SM-A556E, Android API 36. A real `jalanku` snapshot was
+partially compared with Settings and lifecycle return refresh was observed.
+Full Flutter suite (97 tests), analyzer, latest APK build/install, full Gradle
+suite under process-local Temurin 21.0.13, and device checks pass. An owned
+CAMERA fixture verified granted/denied, Settings comparison, lifecycle refresh
+and uninstall/requery without touching third-party apps. Phase 03 is PASS;
+Phase 04 implementation is in progress; automated acceptance currently passes
+and APK/device review is pending.
 
 ---
 
@@ -242,6 +246,35 @@ tanpa update. UI baseline S01/S03 sudah dibaca manual melalui image viewer.
 
 ---
 
+## P1-007 — Phase 03 device acceptance (RESOLVED)
+
+| | |
+|---|---|
+| **Severity** | P1 (gate fase) |
+| **Status** | **CLOSED — Phase 03 PASS** |
+| **Owner** | Phase 03 implementation/review |
+
+**Gejala.** Acceptance Phase 03 sempat tertahan saat READ awal tidak menemukan
+device Android.
+
+**Akar masalah.** Device baru tersambung/terotorisasi setelah probe READ awal;
+verifikasi denied/uninstall memerlukan fixture sendiri agar tidak mengubah app
+pihak ketiga.
+
+**Perubahan / kondisi kini.** Samsung SM-A556E, API 36, serial `RRCY102L98L`;
+APK terpasang. Snapshot jalanku (`id.jalanku.jalanku`) melaporkan
+`ACCESS_FINE_LOCATION` granted, sesuai Settings. Fixture owned
+`id.konsena.phase03_permission_fixture` juga membuktikan CAMERA granted vs
+denied, lifecycle refresh, dan hilang dari S04 serta unavailable/historical di
+S05 setelah uninstall. Tidak ada izin pihak ketiga yang diubah.
+
+**Regression / REVIEW.** Device checks PASS dengan fixture disposable; full
+Flutter suite (97 tests), analyze, APK build/install, full `./gradlew test`
+(Temurin 21.0.13) dan `git diff --check` PASS. Tidak ada izin pihak ketiga yang
+diubah; isu ditutup dan Phase 03 berstatus PASS.
+
+---
+
 ## P2-001 — Distribusi Gradle 9.3.1 korup saat unduhan pertama
 
 | | |
@@ -340,3 +373,82 @@ bantu test ditolak policy yang tidak relevan dengan yang sedang diukur.
 **Solusi.** Kedua file test melakukan `alter table ... disable row level
 security` pada tabel harness masing-masing. Tabel dibuang oleh `ROLLBACK`.
 Dokumentasi ada di header `supabase/tests/rls_owner_isolation_test.sql`.
+
+---
+
+## P2-006 — Host Flutter tests need a C compiler/PDFium test-library workaround
+
+| | |
+|---|---|
+| **Severity** | P2 (developer test environment only) |
+| **Status** | **OPEN — temporary workaround verified** |
+| **Owner** | Operator / host toolchain |
+
+**Gejala.** On this Linux host, `flutter test` cannot find `clang` for the
+PDFium native-asset hook. Flutter's VM test worker also does not automatically
+discover the hook-built PDFium library.
+
+**Reproduksi.** Plain `flutter test test/features/policy_import/` stops before
+tests with `No compiler configured on host 'linux_x64' with target 'linux_x64'`.
+
+**Mitigasi teruji.** Use a process-local clang-to-GCC wrapper from
+`/tmp/opencode/phase04/host-toolchain` (not committed). The PDFium fixture test
+creates and removes a temporary test-owned library link for the Flutter VM
+worker. With that setup, focused parser/repository tests and the full 112-test
+suite pass. Install real clang or update Flutter/PDFium native-asset test
+discovery to remove this host-only workaround. Android APK build is reviewed
+separately and does not use this host PDFium library.
+
+---
+
+## P1-008 — Hasil penerimaan perangkat LiveScan
+
+| | |
+|---|---|
+| **Severity** | P1 (Phase 05 gate) |
+| **Status** | **CLOSED — PASS dikonfirmasi operator; rincian metrik tidak dicatat** |
+| **Owner** | Implementer / device acceptance operator |
+
+**Resolusi.** Operator mengonfirmasi bahwa uji fisik telah dilakukan dan meminta
+Phase 05 ditandai PASS. Catatan ini menerima konfirmasi operator; rincian
+jarak/durasi/lighting, segmen/gap/koreksi OCR, pause-resume, dan Finish →
+S27/S11/S14 tidak tersedia untuk dicantumkan dan tidak dikarang.
+
+**Tambahan automated (resolved).** Test About yang sebelumnya tidak stabil kini
+menggunakan asset bundle deterministik untuk menguji catalog; `flutter test
+--concurrency=1` menghasilkan **120 pass**. Tidak ada lagi blocker automated
+suite yang diketahui untuk Phase 05.
+
+---
+
+## P1-009 — Empat model belum memenuhi gate MVP AI
+
+**Status OPEN.** Owner pipeline pelatihan, pemegang hak model, dan integrasi
+Android. MVP mensyaratkan AI yang berjalan dengan hasil yang sesuai kontrak dan
+kualitas yang terukur pada data target.
+
+- ConsentGap FP32 adalah demo sintetis. Parity ekspor 6/10 prediksi sesuai
+  dengan selisih maksimum logit 0,20694. Gate paket menuntut kesepakatan
+  0,99 dan selisih maksimum 0,001. Reproduksi dengan checkpoint dan vektor
+  PyTorch asli atau ekspor pengganti. Keduanya belum tersedia di workspace.
+- Privacy Classifier melewati QA vektor Android, tetapi paket berstatus
+  `release_eligible: false`. Catatan dataset APP-350 dan OPP-115 membatasi
+  penggunaan. Dokumen clearance redistribusi belum tersedia.
+  [Ketentuan dataset dari pemilik sumber](https://usableprivacy.org/data)
+- Consent NLI melewati QA tokenizer/logit/label pada Samsung. Evaluasi yang
+  mewakili kebijakan dan izin aplikasi Indonesia serta pengukuran perangkat
+  dengan RAM lebih rendah masih terbuka.
+- Dark Pattern melewati QA tensor dan satu alur PNG sintetis dengan crop serta
+  rotasi di Samsung. Tensor identik dengan referensi Pillow. Cakupan JPEG,
+  orientasi EXIF dan kualitas pada screenshot produk masih terbuka. Metadata
+  FP32 mencatat macro F1 sekitar 0,463 pada sampel validasi ekspor.
+
+Hasil setiap model, cakupan uji, dan kebutuhan handoff tercatat di
+[PHASE_06_TERPADU_REPORT.md](PHASE_06_TERPADU_REPORT.md).
+
+## P1-010 — Gate distribusi Android publik masih terbuka
+
+**Status OPEN.** Owner operator/publisher. Signing produksi belum dikonfigurasi.
+Uji artefak release pada perangkat 16 KB, pemeriksaan SDK pihak ketiga,
+kebijakan privasi yang di-host dan deklarasi Data Safety masih diperlukan.
+Cakupan debug internal dicatat di [laporan Phase 06](PHASE_06_TERPADU_REPORT.md).

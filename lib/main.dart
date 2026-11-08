@@ -13,6 +13,7 @@ import 'data/local/app_database.dart';
 import 'data/audit/audit_repository.dart';
 import 'data/audit/local_source_file_store.dart';
 import 'data/audit/local_data_cipher.dart';
+import 'features/report/data/audit_pdf_export.dart';
 
 /// KONSENA AI entry point.
 ///
@@ -61,6 +62,7 @@ Future<void> main() async {
     database: database,
     files: sourceFiles,
     cipher: cipher,
+    beforeDelete: AuditPdfExport.clearCache,
   );
   await audits.recoverFileLifecycle();
   final journeyStore = await _createJourneyStore();

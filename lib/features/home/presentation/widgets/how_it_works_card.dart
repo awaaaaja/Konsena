@@ -11,9 +11,9 @@ class HowItWorksCard extends StatelessWidget {
   const HowItWorksCard({super.key});
 
   static const List<_Step> _steps = [
-    _Step('Pilih sumber audit', 'Direncanakan'),
-    _Step('Tinjau izin & dokumen', 'Belum aktif'),
-    _Step('Periksa bukti sebelum bertindak', 'Tanpa contoh'),
+    _Step('Pilih sumber audit', 'Tersedia lokal'),
+    _Step('Tinjau izin & dokumen', 'Tinjau manual'),
+    _Step('Periksa bukti sebelum bertindak', 'Kutipan bersumber'),
   ];
 
   @override

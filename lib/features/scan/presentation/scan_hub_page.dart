@@ -2,43 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../theme/konsena_spacing.dart';
+import '../../shared/widgets/konsena_back_button.dart';
+import 'scan_audit_target.dart';
 
-/// S06 — the navigation hub is functional even though capture engines are not.
+/// S06 — local import and camera-to-monitor capture entry points.
 class ScanHubPage extends StatelessWidget {
-  const ScanHubPage({super.key});
+  const ScanHubPage({this.auditId, super.key});
+
+  final String? auditId;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Pindai Sumber')),
+    appBar: AppBar(
+      leading: auditId == null
+          ? null
+          : KonsenaBackButton(fallback: '/audit/$auditId/sources'),
+      title: const Text('Pindai Sumber'),
+    ),
     body: ListView(
       padding: const EdgeInsets.all(KonsenaSpacing.lg),
       children: [
         Text(
-          'Pilih sumber yang ingin kamu tinjau',
+          'Sumber apa yang ingin ditambahkan?',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: KonsenaSpacing.xs),
-        const Text(
-          'Belum ada berkas yang diunggah atau kamera yang diaktifkan.',
+        Text(
+          auditId == null
+              ? 'Pilih cara menambah sumber, lalu tentukan audit tujuan.'
+              : 'Sumber akan ditambahkan ke audit yang sedang dibuka.',
         ),
         const SizedBox(height: KonsenaSpacing.lg),
         _ScanChoice(
-          icon: Icons.description_outlined,
-          title: 'Dokumen atau teks',
-          detail: 'Tentukan jenis dokumen, lalu lanjut ke alur impor saat tersedia.',
-          onTap: () => context.push('/scan/document-type'),
-        ),
-        _ScanChoice(
           icon: Icons.camera_alt_outlined,
-          title: 'LiveScan layar laptop',
-          detail: 'Buka panduan. Phase ini tidak meminta izin kamera.',
-          onTap: () => context.push('/scan/camera/how-to'),
+          title: 'LiveScan',
+          detail: 'Baca teks di layar laptop dengan kamera ponsel.',
+          onTap: () =>
+              context.push(scanLocation('/scan/camera/how-to', auditId)),
         ),
         _ScanChoice(
           icon: Icons.image_outlined,
           title: 'Screenshot persetujuan',
-          detail: 'Impor dan anotasi manual akan tersedia pada Phase 06.',
-          onTap: () => context.push('/consent-ui/import'),
+          detail: 'Pilih gambar, atur area, dan tambahkan catatan.',
+          onTap: () =>
+              context.push(scanLocation('/consent-ui/import', auditId)),
+        ),
+        _ScanChoice(
+          icon: Icons.description_outlined,
+          title: 'Dokumen atau teks',
+          detail: 'Impor file atau tempel teks untuk ditinjau.',
+          onTap: () =>
+              context.push(scanLocation('/scan/document-type', auditId)),
         ),
       ],
     ),

@@ -1,0 +1,28 @@
+{
+  "tokenizer": "Hugging Face tokenizers JSON WordPiece",
+  "tokenizer_class": "DistilBertTokenizerFast",
+  "max_length": 256,
+  "padding": "max_length",
+  "truncation": "longest_first",
+  "padding_side": "right",
+  "truncation_side": "right",
+  "return_token_type_ids": false,
+  "pad_token_id": 0,
+  "normalizer": "Read tokenizer.json; preserve case/Unicode/accent/special-token rules exactly",
+  "pair": "[CLS] A [SEP] B [SEP]; see tokenizer post_processor and golden vectors",
+  "calibration": {
+    "temperature": 1.0,
+    "thresholds": [
+      0.6,
+      0.25,
+      0.75,
+      0.85,
+      0.6499999999999999,
+      0.7999999999999999,
+      0.75,
+      0.5,
+      0.39999999999999997
+    ],
+    "fitted_on": "val"
+  }
+}

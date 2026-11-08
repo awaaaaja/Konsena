@@ -42,9 +42,9 @@ void main() {
     expect(store.snapshot.analyticsOptIn, isFalse);
   });
 
-  test('Android manifest does not request camera permission in Phase 01A', () {
+  test('camera permission is declared for just-in-time LiveScan use', () {
     final manifest = File('android/app/src/main/AndroidManifest.xml')
         .readAsStringSync();
-    expect(manifest, isNot(contains('android.permission.CAMERA')));
+    expect(manifest, contains('android.permission.CAMERA'));
   });
 }

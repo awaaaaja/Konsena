@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "task": "policy",
+  "model_version": "85c9fa3d1615afc9d392d1b358211d00a0b03df710d9093f280b29bc3b824f93",
+  "inputs": [
+    {
+      "name": "input_ids",
+      "dtype": "int64",
+      "shape": [
+        "batch",
+        "seq"
+      ]
+    },
+    {
+      "name": "attention_mask",
+      "dtype": "int64",
+      "shape": [
+        "batch",
+        "seq"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "logits",
+      "dtype": "float32",
+      "shape": [
+        "batch",
+        9
+      ]
+    }
+  ],
+  "activation": "sigmoid",
+  "calibration": {
+    "temperature": 1.0,
+    "thresholds": [
+      0.6,
+      0.25,
+      0.75,
+      0.85,
+      0.6499999999999999,
+      0.7999999999999999,
+      0.75,
+      0.5,
+      0.39999999999999997
+    ],
+    "fitted_on": "val"
+  },
+  "token_type_ids": false,
+  "opset": 17,
+  "android_validation": "BLOCKED: run on physical Android before production",
+  "source_run_signature": "85c9fa3d1615afc9d392d1b358211d00a0b03df710d9093f280b29bc3b824f93"
+}

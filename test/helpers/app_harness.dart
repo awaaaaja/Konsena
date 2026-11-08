@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:konsena_ai/app/konsena_app.dart';
@@ -76,6 +78,15 @@ Future<void> pumpApp(
   );
   await tester.pump();
   await pumpFrames(tester, frames: 8);
+  await tester.pumpAndSettle();
+  // Asset decoding happens outside the fake test clock. Waiting for frames
+  // alone can capture a missing brand image in an isolated golden run.
+  await tester.runAsync(
+    () => precacheImage(
+      const AssetImage('assets/brand/konsena_mark_transparent.png'),
+      tester.element(find.byType(KonsenaApp)),
+    ),
+  );
   await tester.pumpAndSettle();
 }
 

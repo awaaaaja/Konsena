@@ -65,7 +65,7 @@ class HeroAuditCard extends StatelessWidget {
                 const SizedBox(height: KonsenaSpacing.sm),
                 Text(
                   'Siapkan audit izin aplikasi dan kebijakan privasi secara '
-                  'berbasis bukti. Pemindaian sumber belum tersedia pada versi ini.',
+                  'berbasis bukti. Impor Privacy Policy dan Terms tersedia lokal untuk ditinjau.',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: KonsenaColors.paleLavender,
                     fontSize: 13,

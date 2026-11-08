@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "task": "consentgap",
+  "input_names": [
+    "input_ids",
+    "attention_mask"
+  ],
+  "input_dtype": "int64",
+  "input_shape": [
+    "batch",
+    "sequence"
+  ],
+  "output_name": "logits",
+  "output_dtype": "float32",
+  "output_shape": [
+    "batch",
+    5
+  ],
+  "opset": 17,
+  "activation": "softmax",
+  "calibration_temperature": 0.65,
+  "label_order": [
+    "aligned",
+    "underspecified",
+    "not_found",
+    "contradicted",
+    "unverifiable"
+  ],
+  "android_validation": "BLOCKED: verify actual tokenizer parity and ONNX Runtime on Android device"
+}

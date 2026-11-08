@@ -1,0 +1,11 @@
+{
+  "labels": [
+    "no_pattern_detected",
+    "potential_dark_pattern"
+  ],
+  "id2label": {
+    "0": "no_pattern_detected",
+    "1": "potential_dark_pattern"
+  },
+  "formulation": "single_label_classification"
+}

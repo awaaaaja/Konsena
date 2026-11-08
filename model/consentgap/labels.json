@@ -1,0 +1,17 @@
+{
+  "labels": [
+    "aligned",
+    "underspecified",
+    "not_found",
+    "contradicted",
+    "unverifiable"
+  ],
+  "id2label": {
+    "0": "aligned",
+    "1": "underspecified",
+    "2": "not_found",
+    "3": "contradicted",
+    "4": "unverifiable"
+  },
+  "formulation": "single_label_5class"
+}

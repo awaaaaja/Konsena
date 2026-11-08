@@ -1,0 +1,294 @@
+{
+  "consent_nli": {
+    "D01": {
+      "expected": "entailment",
+      "actual": "neutral",
+      "match": false,
+      "probabilities": {
+        "entailment": 0.22301457,
+        "neutral": 0.61073303,
+        "contradiction": 0.1662524
+      },
+      "logits": [
+        -0.2797195613384247,
+        1.049582839012146,
+        -0.6672986149787903
+      ],
+      "tensor_sha256": null
+    },
+    "D02": {
+      "expected": "contradiction",
+      "actual": "neutral",
+      "match": false,
+      "probabilities": {
+        "entailment": 0.21263039,
+        "neutral": 0.60773552,
+        "contradiction": 0.17963409
+      },
+      "logits": [
+        -0.356561541557312,
+        1.0291650295257568,
+        -0.5790747404098511
+      ],
+      "tensor_sha256": null
+    },
+    "D03": {
+      "expected": "entailment",
+      "actual": "neutral",
+      "match": false,
+      "probabilities": {
+        "entailment": 0.28916435,
+        "neutral": 0.49697674,
+        "contradiction": 0.21385891
+      },
+      "logits": [
+        -0.11685925722122192,
+        0.5977176427841187,
+        -0.5149266719818115
+      ],
+      "tensor_sha256": null
+    },
+    "D04": {
+      "expected": "contradiction",
+      "actual": "neutral",
+      "match": false,
+      "probabilities": {
+        "entailment": 0.29141439,
+        "neutral": 0.47082402,
+        "contradiction": 0.23776159
+      },
+      "logits": [
+        -0.14003077149391174,
+        0.4929874539375305,
+        -0.4085214138031006
+      ],
+      "tensor_sha256": null
+    },
+    "L01": {
+      "expected": "entailment",
+      "actual": "neutral",
+      "match": false,
+      "probabilities": {
+        "entailment": 0.24471605,
+        "neutral": 0.58770472,
+        "contradiction": 0.16757923
+      },
+      "logits": [
+        -0.20296567678451538,
+        0.9530895948410034,
+        -0.7025872468948364
+      ],
+      "tensor_sha256": null
+    },
+    "L02": {
+      "expected": "contradiction",
+      "actual": "neutral",
+      "match": false,
+      "probabilities": {
+        "entailment": 0.23121735,
+        "neutral": 0.60103697,
+        "contradiction": 0.16774567
+      },
+      "logits": [
+        -0.26529067754745483,
+        0.9952329397201538,
+        -0.688732922077179
+      ],
+      "tensor_sha256": null
+    }
+  },
+  "dark_pattern": {
+    "S01": {
+      "expected": "no_pattern_detected",
+      "actual": "no_pattern_detected",
+      "match": true,
+      "probabilities": {
+        "no_pattern_detected": 0.64634863,
+        "potential_dark_pattern": 0.35365137
+      },
+      "logits": [
+        -0.06893619894981384,
+        -0.7152450084686279
+      ],
+      "tensor_sha256": "84e07c22b76a0caa40a9ece2881e7c6e3d09a91b3cdeba1d92516da78ce462ce"
+    },
+    "S02": {
+      "expected": "potential_dark_pattern",
+      "actual": "no_pattern_detected",
+      "match": false,
+      "probabilities": {
+        "no_pattern_detected": 0.56266338,
+        "potential_dark_pattern": 0.43733662
+      },
+      "logits": [
+        -0.055036164820194244,
+        -0.3250998556613922
+      ],
+      "tensor_sha256": "e8fdd61682000ad0d8f13eaf9ded189add2948c2bf801baeeb7ebc47c6492550"
+    },
+    "S03": {
+      "expected": "no_pattern_detected",
+      "actual": "no_pattern_detected",
+      "match": true,
+      "probabilities": {
+        "no_pattern_detected": 0.73694937,
+        "potential_dark_pattern": 0.26305063
+      },
+      "logits": [
+        0.29779332876205444,
+        -0.8063184022903442
+      ],
+      "tensor_sha256": "8737f19c07e66a8c0c35430d2b2e5b21a90efc1b139304fd42edb451d537bb98"
+    },
+    "S04": {
+      "expected": "potential_dark_pattern",
+      "actual": "no_pattern_detected",
+      "match": false,
+      "probabilities": {
+        "no_pattern_detected": 0.5730734,
+        "potential_dark_pattern": 0.4269266
+      },
+      "logits": [
+        -0.07336961477994919,
+        -0.38890156149864197
+      ],
+      "tensor_sha256": "dd62a73477fa4df0cf86bfc65fb15a8ca74239f199fda86df4417a58cbb1628b"
+    }
+  },
+  "privacy_classifier": {
+    "P01": {
+      "expected": [
+        "third_party_sharing_collection"
+      ],
+      "actual": [
+        "third_party_sharing_collection"
+      ],
+      "match": true,
+      "probabilities": {
+        "first_party_collection_use": 0.43329336,
+        "third_party_sharing_collection": 0.9978715,
+        "user_choice_control": 0.01858243,
+        "user_access_edit_deletion": 0.01017045,
+        "data_retention": 0.02175557,
+        "data_security": 0.06855442,
+        "policy_change": 0.01971622,
+        "do_not_track": 0.00630194,
+        "international_specific_audiences": 0.03033344
+      },
+      "logits": [
+        -0.268426775932312,
+        6.150208473205566,
+        -3.9667816162109375,
+        -4.5780463218688965,
+        -3.805889844894409,
+        -2.609109878540039,
+        -3.906400442123413,
+        -5.06057596206665,
+        -3.4647016525268555
+      ],
+      "tensor_sha256": null
+    },
+    "P02": {
+      "expected": [
+        "data_retention"
+      ],
+      "actual": [
+        "data_retention"
+      ],
+      "match": true,
+      "probabilities": {
+        "first_party_collection_use": 0.00814336,
+        "third_party_sharing_collection": 0.00698248,
+        "user_choice_control": 0.09816444,
+        "user_access_edit_deletion": 0.50826698,
+        "data_retention": 0.84672264,
+        "data_security": 0.69416106,
+        "policy_change": 0.21543105,
+        "do_not_track": 0.04558478,
+        "international_specific_audiences": 0.15806797
+      },
+      "logits": [
+        -4.802375793457031,
+        -4.957344055175781,
+        -2.2177882194519043,
+        0.03307092934846878,
+        1.7091240882873535,
+        0.8196454048156738,
+        -1.2924935817718506,
+        -3.041524887084961,
+        -1.6726741790771484
+      ],
+      "tensor_sha256": null
+    },
+    "P03": {
+      "expected": [
+        "user_access_edit_deletion"
+      ],
+      "actual": [
+        "user_choice_control",
+        "user_access_edit_deletion"
+      ],
+      "match": false,
+      "probabilities": {
+        "first_party_collection_use": 0.02188363,
+        "third_party_sharing_collection": 0.00520328,
+        "user_choice_control": 0.80949892,
+        "user_access_edit_deletion": 0.98656807,
+        "data_retention": 0.45558061,
+        "data_security": 0.09898862,
+        "policy_change": 0.03499974,
+        "do_not_track": 0.03531825,
+        "international_specific_audiences": 0.12041911
+      },
+      "logits": [
+        -3.7998898029327393,
+        -5.253249168395996,
+        1.4467575550079346,
+        4.296597480773926,
+        -0.17814719676971436,
+        -2.208513021469116,
+        -3.3167877197265625,
+        -3.3073983192443848,
+        -1.9884673357009888
+      ],
+      "tensor_sha256": null
+    },
+    "P04": {
+      "expected": [
+        "data_security"
+      ],
+      "actual": [
+        "data_security"
+      ],
+      "match": true,
+      "probabilities": {
+        "first_party_collection_use": 0.01290861,
+        "third_party_sharing_collection": 0.00333366,
+        "user_choice_control": 0.04026788,
+        "user_access_edit_deletion": 0.02140585,
+        "data_retention": 0.02576403,
+        "data_security": 0.94770651,
+        "policy_change": 0.00954468,
+        "do_not_track": 0.0060074,
+        "international_specific_audiences": 0.02713072
+      },
+      "logits": [
+        -4.3368682861328125,
+        -5.70034646987915,
+        -3.17110013961792,
+        -3.8224527835845947,
+        -3.632674217224121,
+        2.8971729278564453,
+        -4.642180442810059,
+        -5.108738422393799,
+        -3.579582929611206
+      ],
+      "tensor_sha256": null
+    }
+  },
+  "consentgap": {
+    "status": "QUARANTINED",
+    "checked": "model/consentgap/onnx_parity.json",
+    "executed": false
+  }
+}

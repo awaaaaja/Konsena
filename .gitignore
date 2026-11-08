@@ -88,3 +88,11 @@ supabase/.branches/
 /android/key.properties
 /android/app/upload-keystore.jks
 /android/app/*.jks
+
+# Large ONNX model weights (>100MB) exceed GitHub's hard file-size limit.
+# Keep small models (dark_pattern) tracked; the rest live outside git.
+model/consentgap/consentgap_5class_fp32.onnx
+model/consent_nli/consent_nli/consent_nli_fp32.onnx
+model/consent_nli/consent_nli/consent_nli_int8.onnx
+model/privacy_classifier/privacy_classifier/privacy_classifier_fp32.onnx
+model/privacy_classifier/privacy_classifier/privacy_classifier_int8.onnx

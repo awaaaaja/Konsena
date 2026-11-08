@@ -1110,6 +1110,17 @@ class $AppPermissionSnapshotsTable extends AppPermissionSnapshots
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _permissionLabelMeta = const VerificationMeta(
+    'permissionLabel',
+  );
+  @override
+  late final GeneratedColumn<String> permissionLabel = GeneratedColumn<String>(
+    'permission_label',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _grantStatusMeta = const VerificationMeta(
     'grantStatus',
   );
@@ -1120,6 +1131,35 @@ class $AppPermissionSnapshotsTable extends AppPermissionSnapshots
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _grantedMeta = const VerificationMeta(
+    'granted',
+  );
+  @override
+  late final GeneratedColumn<bool> granted = GeneratedColumn<bool>(
+    'granted',
+    aliasedName,
+    true,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("granted" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _flagsAvailableMeta = const VerificationMeta(
+    'flagsAvailable',
+  );
+  @override
+  late final GeneratedColumn<bool> flagsAvailable = GeneratedColumn<bool>(
+    'flags_available',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("flags_available" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
   );
   static const VerificationMeta _androidSdkMeta = const VerificationMeta(
     'androidSdk',
@@ -1161,7 +1201,10 @@ class $AppPermissionSnapshotsTable extends AppPermissionSnapshots
     appSnapshotId,
     packageName,
     permissionName,
+    permissionLabel,
     grantStatus,
+    granted,
+    flagsAvailable,
     androidSdk,
     protectionLevel,
     capturedAt,
@@ -1222,6 +1265,15 @@ class $AppPermissionSnapshotsTable extends AppPermissionSnapshots
     } else if (isInserting) {
       context.missing(_permissionNameMeta);
     }
+    if (data.containsKey('permission_label')) {
+      context.handle(
+        _permissionLabelMeta,
+        permissionLabel.isAcceptableOrUnknown(
+          data['permission_label']!,
+          _permissionLabelMeta,
+        ),
+      );
+    }
     if (data.containsKey('grant_status')) {
       context.handle(
         _grantStatusMeta,
@@ -1232,6 +1284,21 @@ class $AppPermissionSnapshotsTable extends AppPermissionSnapshots
       );
     } else if (isInserting) {
       context.missing(_grantStatusMeta);
+    }
+    if (data.containsKey('granted')) {
+      context.handle(
+        _grantedMeta,
+        granted.isAcceptableOrUnknown(data['granted']!, _grantedMeta),
+      );
+    }
+    if (data.containsKey('flags_available')) {
+      context.handle(
+        _flagsAvailableMeta,
+        flagsAvailable.isAcceptableOrUnknown(
+          data['flags_available']!,
+          _flagsAvailableMeta,
+        ),
+      );
     }
     if (data.containsKey('android_sdk')) {
       context.handle(
@@ -1288,9 +1355,21 @@ class $AppPermissionSnapshotsTable extends AppPermissionSnapshots
         DriftSqlType.string,
         data['${effectivePrefix}permission_name'],
       )!,
+      permissionLabel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}permission_label'],
+      ),
       grantStatus: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}grant_status'],
+      )!,
+      granted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}granted'],
+      ),
+      flagsAvailable: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}flags_available'],
       )!,
       androidSdk: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -1320,7 +1399,10 @@ class AppPermissionSnapshotRow extends DataClass
   final String? appSnapshotId;
   final String packageName;
   final String permissionName;
+  final String? permissionLabel;
   final String grantStatus;
+  final bool? granted;
+  final bool flagsAvailable;
   final int? androidSdk;
   final String? protectionLevel;
   final DateTime capturedAt;
@@ -1330,7 +1412,10 @@ class AppPermissionSnapshotRow extends DataClass
     this.appSnapshotId,
     required this.packageName,
     required this.permissionName,
+    this.permissionLabel,
     required this.grantStatus,
+    this.granted,
+    required this.flagsAvailable,
     this.androidSdk,
     this.protectionLevel,
     required this.capturedAt,
@@ -1345,7 +1430,14 @@ class AppPermissionSnapshotRow extends DataClass
     }
     map['package_name'] = Variable<String>(packageName);
     map['permission_name'] = Variable<String>(permissionName);
+    if (!nullToAbsent || permissionLabel != null) {
+      map['permission_label'] = Variable<String>(permissionLabel);
+    }
     map['grant_status'] = Variable<String>(grantStatus);
+    if (!nullToAbsent || granted != null) {
+      map['granted'] = Variable<bool>(granted);
+    }
+    map['flags_available'] = Variable<bool>(flagsAvailable);
     if (!nullToAbsent || androidSdk != null) {
       map['android_sdk'] = Variable<int>(androidSdk);
     }
@@ -1365,7 +1457,14 @@ class AppPermissionSnapshotRow extends DataClass
           : Value(appSnapshotId),
       packageName: Value(packageName),
       permissionName: Value(permissionName),
+      permissionLabel: permissionLabel == null && nullToAbsent
+          ? const Value.absent()
+          : Value(permissionLabel),
       grantStatus: Value(grantStatus),
+      granted: granted == null && nullToAbsent
+          ? const Value.absent()
+          : Value(granted),
+      flagsAvailable: Value(flagsAvailable),
       androidSdk: androidSdk == null && nullToAbsent
           ? const Value.absent()
           : Value(androidSdk),
@@ -1387,7 +1486,10 @@ class AppPermissionSnapshotRow extends DataClass
       appSnapshotId: serializer.fromJson<String?>(json['appSnapshotId']),
       packageName: serializer.fromJson<String>(json['packageName']),
       permissionName: serializer.fromJson<String>(json['permissionName']),
+      permissionLabel: serializer.fromJson<String?>(json['permissionLabel']),
       grantStatus: serializer.fromJson<String>(json['grantStatus']),
+      granted: serializer.fromJson<bool?>(json['granted']),
+      flagsAvailable: serializer.fromJson<bool>(json['flagsAvailable']),
       androidSdk: serializer.fromJson<int?>(json['androidSdk']),
       protectionLevel: serializer.fromJson<String?>(json['protectionLevel']),
       capturedAt: serializer.fromJson<DateTime>(json['capturedAt']),
@@ -1402,7 +1504,10 @@ class AppPermissionSnapshotRow extends DataClass
       'appSnapshotId': serializer.toJson<String?>(appSnapshotId),
       'packageName': serializer.toJson<String>(packageName),
       'permissionName': serializer.toJson<String>(permissionName),
+      'permissionLabel': serializer.toJson<String?>(permissionLabel),
       'grantStatus': serializer.toJson<String>(grantStatus),
+      'granted': serializer.toJson<bool?>(granted),
+      'flagsAvailable': serializer.toJson<bool>(flagsAvailable),
       'androidSdk': serializer.toJson<int?>(androidSdk),
       'protectionLevel': serializer.toJson<String?>(protectionLevel),
       'capturedAt': serializer.toJson<DateTime>(capturedAt),
@@ -1415,7 +1520,10 @@ class AppPermissionSnapshotRow extends DataClass
     Value<String?> appSnapshotId = const Value.absent(),
     String? packageName,
     String? permissionName,
+    Value<String?> permissionLabel = const Value.absent(),
     String? grantStatus,
+    Value<bool?> granted = const Value.absent(),
+    bool? flagsAvailable,
     Value<int?> androidSdk = const Value.absent(),
     Value<String?> protectionLevel = const Value.absent(),
     DateTime? capturedAt,
@@ -1427,7 +1535,12 @@ class AppPermissionSnapshotRow extends DataClass
         : this.appSnapshotId,
     packageName: packageName ?? this.packageName,
     permissionName: permissionName ?? this.permissionName,
+    permissionLabel: permissionLabel.present
+        ? permissionLabel.value
+        : this.permissionLabel,
     grantStatus: grantStatus ?? this.grantStatus,
+    granted: granted.present ? granted.value : this.granted,
+    flagsAvailable: flagsAvailable ?? this.flagsAvailable,
     androidSdk: androidSdk.present ? androidSdk.value : this.androidSdk,
     protectionLevel: protectionLevel.present
         ? protectionLevel.value
@@ -1449,9 +1562,16 @@ class AppPermissionSnapshotRow extends DataClass
       permissionName: data.permissionName.present
           ? data.permissionName.value
           : this.permissionName,
+      permissionLabel: data.permissionLabel.present
+          ? data.permissionLabel.value
+          : this.permissionLabel,
       grantStatus: data.grantStatus.present
           ? data.grantStatus.value
           : this.grantStatus,
+      granted: data.granted.present ? data.granted.value : this.granted,
+      flagsAvailable: data.flagsAvailable.present
+          ? data.flagsAvailable.value
+          : this.flagsAvailable,
       androidSdk: data.androidSdk.present
           ? data.androidSdk.value
           : this.androidSdk,
@@ -1472,7 +1592,10 @@ class AppPermissionSnapshotRow extends DataClass
           ..write('appSnapshotId: $appSnapshotId, ')
           ..write('packageName: $packageName, ')
           ..write('permissionName: $permissionName, ')
+          ..write('permissionLabel: $permissionLabel, ')
           ..write('grantStatus: $grantStatus, ')
+          ..write('granted: $granted, ')
+          ..write('flagsAvailable: $flagsAvailable, ')
           ..write('androidSdk: $androidSdk, ')
           ..write('protectionLevel: $protectionLevel, ')
           ..write('capturedAt: $capturedAt')
@@ -1487,7 +1610,10 @@ class AppPermissionSnapshotRow extends DataClass
     appSnapshotId,
     packageName,
     permissionName,
+    permissionLabel,
     grantStatus,
+    granted,
+    flagsAvailable,
     androidSdk,
     protectionLevel,
     capturedAt,
@@ -1501,7 +1627,10 @@ class AppPermissionSnapshotRow extends DataClass
           other.appSnapshotId == this.appSnapshotId &&
           other.packageName == this.packageName &&
           other.permissionName == this.permissionName &&
+          other.permissionLabel == this.permissionLabel &&
           other.grantStatus == this.grantStatus &&
+          other.granted == this.granted &&
+          other.flagsAvailable == this.flagsAvailable &&
           other.androidSdk == this.androidSdk &&
           other.protectionLevel == this.protectionLevel &&
           other.capturedAt == this.capturedAt);
@@ -1514,7 +1643,10 @@ class AppPermissionSnapshotsCompanion
   final Value<String?> appSnapshotId;
   final Value<String> packageName;
   final Value<String> permissionName;
+  final Value<String?> permissionLabel;
   final Value<String> grantStatus;
+  final Value<bool?> granted;
+  final Value<bool> flagsAvailable;
   final Value<int?> androidSdk;
   final Value<String?> protectionLevel;
   final Value<DateTime> capturedAt;
@@ -1525,7 +1657,10 @@ class AppPermissionSnapshotsCompanion
     this.appSnapshotId = const Value.absent(),
     this.packageName = const Value.absent(),
     this.permissionName = const Value.absent(),
+    this.permissionLabel = const Value.absent(),
     this.grantStatus = const Value.absent(),
+    this.granted = const Value.absent(),
+    this.flagsAvailable = const Value.absent(),
     this.androidSdk = const Value.absent(),
     this.protectionLevel = const Value.absent(),
     this.capturedAt = const Value.absent(),
@@ -1537,7 +1672,10 @@ class AppPermissionSnapshotsCompanion
     this.appSnapshotId = const Value.absent(),
     required String packageName,
     required String permissionName,
+    this.permissionLabel = const Value.absent(),
     required String grantStatus,
+    this.granted = const Value.absent(),
+    this.flagsAvailable = const Value.absent(),
     this.androidSdk = const Value.absent(),
     this.protectionLevel = const Value.absent(),
     required DateTime capturedAt,
@@ -1554,7 +1692,10 @@ class AppPermissionSnapshotsCompanion
     Expression<String>? appSnapshotId,
     Expression<String>? packageName,
     Expression<String>? permissionName,
+    Expression<String>? permissionLabel,
     Expression<String>? grantStatus,
+    Expression<bool>? granted,
+    Expression<bool>? flagsAvailable,
     Expression<int>? androidSdk,
     Expression<String>? protectionLevel,
     Expression<DateTime>? capturedAt,
@@ -1566,7 +1707,10 @@ class AppPermissionSnapshotsCompanion
       if (appSnapshotId != null) 'app_snapshot_id': appSnapshotId,
       if (packageName != null) 'package_name': packageName,
       if (permissionName != null) 'permission_name': permissionName,
+      if (permissionLabel != null) 'permission_label': permissionLabel,
       if (grantStatus != null) 'grant_status': grantStatus,
+      if (granted != null) 'granted': granted,
+      if (flagsAvailable != null) 'flags_available': flagsAvailable,
       if (androidSdk != null) 'android_sdk': androidSdk,
       if (protectionLevel != null) 'protection_level': protectionLevel,
       if (capturedAt != null) 'captured_at': capturedAt,
@@ -1580,7 +1724,10 @@ class AppPermissionSnapshotsCompanion
     Value<String?>? appSnapshotId,
     Value<String>? packageName,
     Value<String>? permissionName,
+    Value<String?>? permissionLabel,
     Value<String>? grantStatus,
+    Value<bool?>? granted,
+    Value<bool>? flagsAvailable,
     Value<int?>? androidSdk,
     Value<String?>? protectionLevel,
     Value<DateTime>? capturedAt,
@@ -1592,7 +1739,10 @@ class AppPermissionSnapshotsCompanion
       appSnapshotId: appSnapshotId ?? this.appSnapshotId,
       packageName: packageName ?? this.packageName,
       permissionName: permissionName ?? this.permissionName,
+      permissionLabel: permissionLabel ?? this.permissionLabel,
       grantStatus: grantStatus ?? this.grantStatus,
+      granted: granted ?? this.granted,
+      flagsAvailable: flagsAvailable ?? this.flagsAvailable,
       androidSdk: androidSdk ?? this.androidSdk,
       protectionLevel: protectionLevel ?? this.protectionLevel,
       capturedAt: capturedAt ?? this.capturedAt,
@@ -1618,8 +1768,17 @@ class AppPermissionSnapshotsCompanion
     if (permissionName.present) {
       map['permission_name'] = Variable<String>(permissionName.value);
     }
+    if (permissionLabel.present) {
+      map['permission_label'] = Variable<String>(permissionLabel.value);
+    }
     if (grantStatus.present) {
       map['grant_status'] = Variable<String>(grantStatus.value);
+    }
+    if (granted.present) {
+      map['granted'] = Variable<bool>(granted.value);
+    }
+    if (flagsAvailable.present) {
+      map['flags_available'] = Variable<bool>(flagsAvailable.value);
     }
     if (androidSdk.present) {
       map['android_sdk'] = Variable<int>(androidSdk.value);
@@ -1644,7 +1803,10 @@ class AppPermissionSnapshotsCompanion
           ..write('appSnapshotId: $appSnapshotId, ')
           ..write('packageName: $packageName, ')
           ..write('permissionName: $permissionName, ')
+          ..write('permissionLabel: $permissionLabel, ')
           ..write('grantStatus: $grantStatus, ')
+          ..write('granted: $granted, ')
+          ..write('flagsAvailable: $flagsAvailable, ')
           ..write('androidSdk: $androidSdk, ')
           ..write('protectionLevel: $protectionLevel, ')
           ..write('capturedAt: $capturedAt, ')
@@ -1816,6 +1978,50 @@ class $DocumentSourcesTable extends DocumentSources
         type: DriftSqlType.string,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _sourceUrlMeta = const VerificationMeta(
+    'sourceUrl',
+  );
+  @override
+  late final GeneratedColumn<String> sourceUrl = GeneratedColumn<String>(
+    'source_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _documentVersionMeta = const VerificationMeta(
+    'documentVersion',
+  );
+  @override
+  late final GeneratedColumn<String> documentVersion = GeneratedColumn<String>(
+    'document_version',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _importWarningsMeta = const VerificationMeta(
+    'importWarnings',
+  );
+  @override
+  late final GeneratedColumn<String> importWarnings = GeneratedColumn<String>(
+    'import_warnings',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _reviewedAtMeta = const VerificationMeta(
+    'reviewedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> reviewedAt = GeneratedColumn<DateTime>(
+    'reviewed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -1854,6 +2060,10 @@ class $DocumentSourcesTable extends DocumentSources
     provenancePage,
     provenanceFrame,
     provenanceLocator,
+    sourceUrl,
+    documentVersion,
+    importWarnings,
+    reviewedAt,
     createdAt,
     updatedAt,
   ];
@@ -1983,6 +2193,36 @@ class $DocumentSourcesTable extends DocumentSources
         ),
       );
     }
+    if (data.containsKey('source_url')) {
+      context.handle(
+        _sourceUrlMeta,
+        sourceUrl.isAcceptableOrUnknown(data['source_url']!, _sourceUrlMeta),
+      );
+    }
+    if (data.containsKey('document_version')) {
+      context.handle(
+        _documentVersionMeta,
+        documentVersion.isAcceptableOrUnknown(
+          data['document_version']!,
+          _documentVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('import_warnings')) {
+      context.handle(
+        _importWarningsMeta,
+        importWarnings.isAcceptableOrUnknown(
+          data['import_warnings']!,
+          _importWarningsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reviewed_at')) {
+      context.handle(
+        _reviewedAtMeta,
+        reviewedAt.isAcceptableOrUnknown(data['reviewed_at']!, _reviewedAtMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -2064,6 +2304,22 @@ class $DocumentSourcesTable extends DocumentSources
         DriftSqlType.string,
         data['${effectivePrefix}provenance_locator'],
       ),
+      sourceUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_url'],
+      ),
+      documentVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}document_version'],
+      ),
+      importWarnings: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}import_warnings'],
+      ),
+      reviewedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}reviewed_at'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -2097,6 +2353,10 @@ class DocumentSourceRow extends DataClass
   final int? provenancePage;
   final int? provenanceFrame;
   final String? provenanceLocator;
+  final String? sourceUrl;
+  final String? documentVersion;
+  final String? importWarnings;
+  final DateTime? reviewedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
   const DocumentSourceRow({
@@ -2114,6 +2374,10 @@ class DocumentSourceRow extends DataClass
     this.provenancePage,
     this.provenanceFrame,
     this.provenanceLocator,
+    this.sourceUrl,
+    this.documentVersion,
+    this.importWarnings,
+    this.reviewedAt,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -2143,6 +2407,18 @@ class DocumentSourceRow extends DataClass
     }
     if (!nullToAbsent || provenanceLocator != null) {
       map['provenance_locator'] = Variable<String>(provenanceLocator);
+    }
+    if (!nullToAbsent || sourceUrl != null) {
+      map['source_url'] = Variable<String>(sourceUrl);
+    }
+    if (!nullToAbsent || documentVersion != null) {
+      map['document_version'] = Variable<String>(documentVersion);
+    }
+    if (!nullToAbsent || importWarnings != null) {
+      map['import_warnings'] = Variable<String>(importWarnings);
+    }
+    if (!nullToAbsent || reviewedAt != null) {
+      map['reviewed_at'] = Variable<DateTime>(reviewedAt);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -2175,6 +2451,18 @@ class DocumentSourceRow extends DataClass
       provenanceLocator: provenanceLocator == null && nullToAbsent
           ? const Value.absent()
           : Value(provenanceLocator),
+      sourceUrl: sourceUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceUrl),
+      documentVersion: documentVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(documentVersion),
+      importWarnings: importWarnings == null && nullToAbsent
+          ? const Value.absent()
+          : Value(importWarnings),
+      reviewedAt: reviewedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reviewedAt),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -2202,6 +2490,10 @@ class DocumentSourceRow extends DataClass
       provenanceLocator: serializer.fromJson<String?>(
         json['provenanceLocator'],
       ),
+      sourceUrl: serializer.fromJson<String?>(json['sourceUrl']),
+      documentVersion: serializer.fromJson<String?>(json['documentVersion']),
+      importWarnings: serializer.fromJson<String?>(json['importWarnings']),
+      reviewedAt: serializer.fromJson<DateTime?>(json['reviewedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -2224,6 +2516,10 @@ class DocumentSourceRow extends DataClass
       'provenancePage': serializer.toJson<int?>(provenancePage),
       'provenanceFrame': serializer.toJson<int?>(provenanceFrame),
       'provenanceLocator': serializer.toJson<String?>(provenanceLocator),
+      'sourceUrl': serializer.toJson<String?>(sourceUrl),
+      'documentVersion': serializer.toJson<String?>(documentVersion),
+      'importWarnings': serializer.toJson<String?>(importWarnings),
+      'reviewedAt': serializer.toJson<DateTime?>(reviewedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -2244,6 +2540,10 @@ class DocumentSourceRow extends DataClass
     Value<int?> provenancePage = const Value.absent(),
     Value<int?> provenanceFrame = const Value.absent(),
     Value<String?> provenanceLocator = const Value.absent(),
+    Value<String?> sourceUrl = const Value.absent(),
+    Value<String?> documentVersion = const Value.absent(),
+    Value<String?> importWarnings = const Value.absent(),
+    Value<DateTime?> reviewedAt = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => DocumentSourceRow(
@@ -2267,6 +2567,14 @@ class DocumentSourceRow extends DataClass
     provenanceLocator: provenanceLocator.present
         ? provenanceLocator.value
         : this.provenanceLocator,
+    sourceUrl: sourceUrl.present ? sourceUrl.value : this.sourceUrl,
+    documentVersion: documentVersion.present
+        ? documentVersion.value
+        : this.documentVersion,
+    importWarnings: importWarnings.present
+        ? importWarnings.value
+        : this.importWarnings,
+    reviewedAt: reviewedAt.present ? reviewedAt.value : this.reviewedAt,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -2298,6 +2606,16 @@ class DocumentSourceRow extends DataClass
       provenanceLocator: data.provenanceLocator.present
           ? data.provenanceLocator.value
           : this.provenanceLocator,
+      sourceUrl: data.sourceUrl.present ? data.sourceUrl.value : this.sourceUrl,
+      documentVersion: data.documentVersion.present
+          ? data.documentVersion.value
+          : this.documentVersion,
+      importWarnings: data.importWarnings.present
+          ? data.importWarnings.value
+          : this.importWarnings,
+      reviewedAt: data.reviewedAt.present
+          ? data.reviewedAt.value
+          : this.reviewedAt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -2320,6 +2638,10 @@ class DocumentSourceRow extends DataClass
           ..write('provenancePage: $provenancePage, ')
           ..write('provenanceFrame: $provenanceFrame, ')
           ..write('provenanceLocator: $provenanceLocator, ')
+          ..write('sourceUrl: $sourceUrl, ')
+          ..write('documentVersion: $documentVersion, ')
+          ..write('importWarnings: $importWarnings, ')
+          ..write('reviewedAt: $reviewedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -2342,6 +2664,10 @@ class DocumentSourceRow extends DataClass
     provenancePage,
     provenanceFrame,
     provenanceLocator,
+    sourceUrl,
+    documentVersion,
+    importWarnings,
+    reviewedAt,
     createdAt,
     updatedAt,
   );
@@ -2363,6 +2689,10 @@ class DocumentSourceRow extends DataClass
           other.provenancePage == this.provenancePage &&
           other.provenanceFrame == this.provenanceFrame &&
           other.provenanceLocator == this.provenanceLocator &&
+          other.sourceUrl == this.sourceUrl &&
+          other.documentVersion == this.documentVersion &&
+          other.importWarnings == this.importWarnings &&
+          other.reviewedAt == this.reviewedAt &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -2382,6 +2712,10 @@ class DocumentSourcesCompanion extends UpdateCompanion<DocumentSourceRow> {
   final Value<int?> provenancePage;
   final Value<int?> provenanceFrame;
   final Value<String?> provenanceLocator;
+  final Value<String?> sourceUrl;
+  final Value<String?> documentVersion;
+  final Value<String?> importWarnings;
+  final Value<DateTime?> reviewedAt;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -2400,6 +2734,10 @@ class DocumentSourcesCompanion extends UpdateCompanion<DocumentSourceRow> {
     this.provenancePage = const Value.absent(),
     this.provenanceFrame = const Value.absent(),
     this.provenanceLocator = const Value.absent(),
+    this.sourceUrl = const Value.absent(),
+    this.documentVersion = const Value.absent(),
+    this.importWarnings = const Value.absent(),
+    this.reviewedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -2419,6 +2757,10 @@ class DocumentSourcesCompanion extends UpdateCompanion<DocumentSourceRow> {
     this.provenancePage = const Value.absent(),
     this.provenanceFrame = const Value.absent(),
     this.provenanceLocator = const Value.absent(),
+    this.sourceUrl = const Value.absent(),
+    this.documentVersion = const Value.absent(),
+    this.importWarnings = const Value.absent(),
+    this.reviewedAt = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
@@ -2448,6 +2790,10 @@ class DocumentSourcesCompanion extends UpdateCompanion<DocumentSourceRow> {
     Expression<int>? provenancePage,
     Expression<int>? provenanceFrame,
     Expression<String>? provenanceLocator,
+    Expression<String>? sourceUrl,
+    Expression<String>? documentVersion,
+    Expression<String>? importWarnings,
+    Expression<DateTime>? reviewedAt,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -2467,6 +2813,10 @@ class DocumentSourcesCompanion extends UpdateCompanion<DocumentSourceRow> {
       if (provenancePage != null) 'provenance_page': provenancePage,
       if (provenanceFrame != null) 'provenance_frame': provenanceFrame,
       if (provenanceLocator != null) 'provenance_locator': provenanceLocator,
+      if (sourceUrl != null) 'source_url': sourceUrl,
+      if (documentVersion != null) 'document_version': documentVersion,
+      if (importWarnings != null) 'import_warnings': importWarnings,
+      if (reviewedAt != null) 'reviewed_at': reviewedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -2488,6 +2838,10 @@ class DocumentSourcesCompanion extends UpdateCompanion<DocumentSourceRow> {
     Value<int?>? provenancePage,
     Value<int?>? provenanceFrame,
     Value<String?>? provenanceLocator,
+    Value<String?>? sourceUrl,
+    Value<String?>? documentVersion,
+    Value<String?>? importWarnings,
+    Value<DateTime?>? reviewedAt,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -2507,6 +2861,10 @@ class DocumentSourcesCompanion extends UpdateCompanion<DocumentSourceRow> {
       provenancePage: provenancePage ?? this.provenancePage,
       provenanceFrame: provenanceFrame ?? this.provenanceFrame,
       provenanceLocator: provenanceLocator ?? this.provenanceLocator,
+      sourceUrl: sourceUrl ?? this.sourceUrl,
+      documentVersion: documentVersion ?? this.documentVersion,
+      importWarnings: importWarnings ?? this.importWarnings,
+      reviewedAt: reviewedAt ?? this.reviewedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -2558,6 +2916,18 @@ class DocumentSourcesCompanion extends UpdateCompanion<DocumentSourceRow> {
     if (provenanceLocator.present) {
       map['provenance_locator'] = Variable<String>(provenanceLocator.value);
     }
+    if (sourceUrl.present) {
+      map['source_url'] = Variable<String>(sourceUrl.value);
+    }
+    if (documentVersion.present) {
+      map['document_version'] = Variable<String>(documentVersion.value);
+    }
+    if (importWarnings.present) {
+      map['import_warnings'] = Variable<String>(importWarnings.value);
+    }
+    if (reviewedAt.present) {
+      map['reviewed_at'] = Variable<DateTime>(reviewedAt.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -2587,6 +2957,10 @@ class DocumentSourcesCompanion extends UpdateCompanion<DocumentSourceRow> {
           ..write('provenancePage: $provenancePage, ')
           ..write('provenanceFrame: $provenanceFrame, ')
           ..write('provenanceLocator: $provenanceLocator, ')
+          ..write('sourceUrl: $sourceUrl, ')
+          ..write('documentVersion: $documentVersion, ')
+          ..write('importWarnings: $importWarnings, ')
+          ..write('reviewedAt: $reviewedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -2646,6 +3020,105 @@ class $DocumentSegmentsTable extends DocumentSegments
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _originalContentMeta = const VerificationMeta(
+    'originalContent',
+  );
+  @override
+  late final GeneratedColumn<String> originalContent = GeneratedColumn<String>(
+    'original_content',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _startOffsetMeta = const VerificationMeta(
+    'startOffset',
+  );
+  @override
+  late final GeneratedColumn<int> startOffset = GeneratedColumn<int>(
+    'start_offset',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _endOffsetMeta = const VerificationMeta(
+    'endOffset',
+  );
+  @override
+  late final GeneratedColumn<int> endOffset = GeneratedColumn<int>(
+    'end_offset',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pageTextSha256Meta = const VerificationMeta(
+    'pageTextSha256',
+  );
+  @override
+  late final GeneratedColumn<String> pageTextSha256 = GeneratedColumn<String>(
+    'page_text_sha256',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _extractionMethodMeta = const VerificationMeta(
+    'extractionMethod',
+  );
+  @override
+  late final GeneratedColumn<String> extractionMethod = GeneratedColumn<String>(
+    'extraction_method',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _confidenceMeta = const VerificationMeta(
+    'confidence',
+  );
+  @override
+  late final GeneratedColumn<double> confidence = GeneratedColumn<double>(
+    'confidence',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _boundingBoxJsonMeta = const VerificationMeta(
+    'boundingBoxJson',
+  );
+  @override
+  late final GeneratedColumn<String> boundingBoxJson = GeneratedColumn<String>(
+    'bounding_box_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _editedAtMeta = const VerificationMeta(
+    'editedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> editedAt = GeneratedColumn<DateTime>(
+    'edited_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _reviewedAtMeta = const VerificationMeta(
+    'reviewedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> reviewedAt = GeneratedColumn<DateTime>(
+    'reviewed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _pageMeta = const VerificationMeta('page');
   @override
   late final GeneratedColumn<int> page = GeneratedColumn<int>(
@@ -2670,6 +3143,15 @@ class $DocumentSegmentsTable extends DocumentSegments
     sourceId,
     sequence,
     content,
+    originalContent,
+    startOffset,
+    endOffset,
+    pageTextSha256,
+    extractionMethod,
+    confidence,
+    boundingBoxJson,
+    editedAt,
+    reviewedAt,
     page,
     frame,
   ];
@@ -2714,6 +3196,75 @@ class $DocumentSegmentsTable extends DocumentSegments
     } else if (isInserting) {
       context.missing(_contentMeta);
     }
+    if (data.containsKey('original_content')) {
+      context.handle(
+        _originalContentMeta,
+        originalContent.isAcceptableOrUnknown(
+          data['original_content']!,
+          _originalContentMeta,
+        ),
+      );
+    }
+    if (data.containsKey('start_offset')) {
+      context.handle(
+        _startOffsetMeta,
+        startOffset.isAcceptableOrUnknown(
+          data['start_offset']!,
+          _startOffsetMeta,
+        ),
+      );
+    }
+    if (data.containsKey('end_offset')) {
+      context.handle(
+        _endOffsetMeta,
+        endOffset.isAcceptableOrUnknown(data['end_offset']!, _endOffsetMeta),
+      );
+    }
+    if (data.containsKey('page_text_sha256')) {
+      context.handle(
+        _pageTextSha256Meta,
+        pageTextSha256.isAcceptableOrUnknown(
+          data['page_text_sha256']!,
+          _pageTextSha256Meta,
+        ),
+      );
+    }
+    if (data.containsKey('extraction_method')) {
+      context.handle(
+        _extractionMethodMeta,
+        extractionMethod.isAcceptableOrUnknown(
+          data['extraction_method']!,
+          _extractionMethodMeta,
+        ),
+      );
+    }
+    if (data.containsKey('confidence')) {
+      context.handle(
+        _confidenceMeta,
+        confidence.isAcceptableOrUnknown(data['confidence']!, _confidenceMeta),
+      );
+    }
+    if (data.containsKey('bounding_box_json')) {
+      context.handle(
+        _boundingBoxJsonMeta,
+        boundingBoxJson.isAcceptableOrUnknown(
+          data['bounding_box_json']!,
+          _boundingBoxJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('edited_at')) {
+      context.handle(
+        _editedAtMeta,
+        editedAt.isAcceptableOrUnknown(data['edited_at']!, _editedAtMeta),
+      );
+    }
+    if (data.containsKey('reviewed_at')) {
+      context.handle(
+        _reviewedAtMeta,
+        reviewedAt.isAcceptableOrUnknown(data['reviewed_at']!, _reviewedAtMeta),
+      );
+    }
     if (data.containsKey('page')) {
       context.handle(
         _pageMeta,
@@ -2755,6 +3306,42 @@ class $DocumentSegmentsTable extends DocumentSegments
         DriftSqlType.string,
         data['${effectivePrefix}content'],
       )!,
+      originalContent: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}original_content'],
+      ),
+      startOffset: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}start_offset'],
+      ),
+      endOffset: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}end_offset'],
+      ),
+      pageTextSha256: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}page_text_sha256'],
+      ),
+      extractionMethod: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}extraction_method'],
+      ),
+      confidence: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}confidence'],
+      ),
+      boundingBoxJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bounding_box_json'],
+      ),
+      editedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}edited_at'],
+      ),
+      reviewedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}reviewed_at'],
+      ),
       page: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}page'],
@@ -2778,6 +3365,15 @@ class DocumentSegmentRow extends DataClass
   final String sourceId;
   final int sequence;
   final String content;
+  final String? originalContent;
+  final int? startOffset;
+  final int? endOffset;
+  final String? pageTextSha256;
+  final String? extractionMethod;
+  final double? confidence;
+  final String? boundingBoxJson;
+  final DateTime? editedAt;
+  final DateTime? reviewedAt;
   final int? page;
   final int? frame;
   const DocumentSegmentRow({
@@ -2785,6 +3381,15 @@ class DocumentSegmentRow extends DataClass
     required this.sourceId,
     required this.sequence,
     required this.content,
+    this.originalContent,
+    this.startOffset,
+    this.endOffset,
+    this.pageTextSha256,
+    this.extractionMethod,
+    this.confidence,
+    this.boundingBoxJson,
+    this.editedAt,
+    this.reviewedAt,
     this.page,
     this.frame,
   });
@@ -2795,6 +3400,33 @@ class DocumentSegmentRow extends DataClass
     map['source_id'] = Variable<String>(sourceId);
     map['sequence'] = Variable<int>(sequence);
     map['content'] = Variable<String>(content);
+    if (!nullToAbsent || originalContent != null) {
+      map['original_content'] = Variable<String>(originalContent);
+    }
+    if (!nullToAbsent || startOffset != null) {
+      map['start_offset'] = Variable<int>(startOffset);
+    }
+    if (!nullToAbsent || endOffset != null) {
+      map['end_offset'] = Variable<int>(endOffset);
+    }
+    if (!nullToAbsent || pageTextSha256 != null) {
+      map['page_text_sha256'] = Variable<String>(pageTextSha256);
+    }
+    if (!nullToAbsent || extractionMethod != null) {
+      map['extraction_method'] = Variable<String>(extractionMethod);
+    }
+    if (!nullToAbsent || confidence != null) {
+      map['confidence'] = Variable<double>(confidence);
+    }
+    if (!nullToAbsent || boundingBoxJson != null) {
+      map['bounding_box_json'] = Variable<String>(boundingBoxJson);
+    }
+    if (!nullToAbsent || editedAt != null) {
+      map['edited_at'] = Variable<DateTime>(editedAt);
+    }
+    if (!nullToAbsent || reviewedAt != null) {
+      map['reviewed_at'] = Variable<DateTime>(reviewedAt);
+    }
     if (!nullToAbsent || page != null) {
       map['page'] = Variable<int>(page);
     }
@@ -2810,6 +3442,33 @@ class DocumentSegmentRow extends DataClass
       sourceId: Value(sourceId),
       sequence: Value(sequence),
       content: Value(content),
+      originalContent: originalContent == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originalContent),
+      startOffset: startOffset == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startOffset),
+      endOffset: endOffset == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endOffset),
+      pageTextSha256: pageTextSha256 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pageTextSha256),
+      extractionMethod: extractionMethod == null && nullToAbsent
+          ? const Value.absent()
+          : Value(extractionMethod),
+      confidence: confidence == null && nullToAbsent
+          ? const Value.absent()
+          : Value(confidence),
+      boundingBoxJson: boundingBoxJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(boundingBoxJson),
+      editedAt: editedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(editedAt),
+      reviewedAt: reviewedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reviewedAt),
       page: page == null && nullToAbsent ? const Value.absent() : Value(page),
       frame: frame == null && nullToAbsent
           ? const Value.absent()
@@ -2827,6 +3486,15 @@ class DocumentSegmentRow extends DataClass
       sourceId: serializer.fromJson<String>(json['sourceId']),
       sequence: serializer.fromJson<int>(json['sequence']),
       content: serializer.fromJson<String>(json['content']),
+      originalContent: serializer.fromJson<String?>(json['originalContent']),
+      startOffset: serializer.fromJson<int?>(json['startOffset']),
+      endOffset: serializer.fromJson<int?>(json['endOffset']),
+      pageTextSha256: serializer.fromJson<String?>(json['pageTextSha256']),
+      extractionMethod: serializer.fromJson<String?>(json['extractionMethod']),
+      confidence: serializer.fromJson<double?>(json['confidence']),
+      boundingBoxJson: serializer.fromJson<String?>(json['boundingBoxJson']),
+      editedAt: serializer.fromJson<DateTime?>(json['editedAt']),
+      reviewedAt: serializer.fromJson<DateTime?>(json['reviewedAt']),
       page: serializer.fromJson<int?>(json['page']),
       frame: serializer.fromJson<int?>(json['frame']),
     );
@@ -2839,6 +3507,15 @@ class DocumentSegmentRow extends DataClass
       'sourceId': serializer.toJson<String>(sourceId),
       'sequence': serializer.toJson<int>(sequence),
       'content': serializer.toJson<String>(content),
+      'originalContent': serializer.toJson<String?>(originalContent),
+      'startOffset': serializer.toJson<int?>(startOffset),
+      'endOffset': serializer.toJson<int?>(endOffset),
+      'pageTextSha256': serializer.toJson<String?>(pageTextSha256),
+      'extractionMethod': serializer.toJson<String?>(extractionMethod),
+      'confidence': serializer.toJson<double?>(confidence),
+      'boundingBoxJson': serializer.toJson<String?>(boundingBoxJson),
+      'editedAt': serializer.toJson<DateTime?>(editedAt),
+      'reviewedAt': serializer.toJson<DateTime?>(reviewedAt),
       'page': serializer.toJson<int?>(page),
       'frame': serializer.toJson<int?>(frame),
     };
@@ -2849,6 +3526,15 @@ class DocumentSegmentRow extends DataClass
     String? sourceId,
     int? sequence,
     String? content,
+    Value<String?> originalContent = const Value.absent(),
+    Value<int?> startOffset = const Value.absent(),
+    Value<int?> endOffset = const Value.absent(),
+    Value<String?> pageTextSha256 = const Value.absent(),
+    Value<String?> extractionMethod = const Value.absent(),
+    Value<double?> confidence = const Value.absent(),
+    Value<String?> boundingBoxJson = const Value.absent(),
+    Value<DateTime?> editedAt = const Value.absent(),
+    Value<DateTime?> reviewedAt = const Value.absent(),
     Value<int?> page = const Value.absent(),
     Value<int?> frame = const Value.absent(),
   }) => DocumentSegmentRow(
@@ -2856,6 +3542,23 @@ class DocumentSegmentRow extends DataClass
     sourceId: sourceId ?? this.sourceId,
     sequence: sequence ?? this.sequence,
     content: content ?? this.content,
+    originalContent: originalContent.present
+        ? originalContent.value
+        : this.originalContent,
+    startOffset: startOffset.present ? startOffset.value : this.startOffset,
+    endOffset: endOffset.present ? endOffset.value : this.endOffset,
+    pageTextSha256: pageTextSha256.present
+        ? pageTextSha256.value
+        : this.pageTextSha256,
+    extractionMethod: extractionMethod.present
+        ? extractionMethod.value
+        : this.extractionMethod,
+    confidence: confidence.present ? confidence.value : this.confidence,
+    boundingBoxJson: boundingBoxJson.present
+        ? boundingBoxJson.value
+        : this.boundingBoxJson,
+    editedAt: editedAt.present ? editedAt.value : this.editedAt,
+    reviewedAt: reviewedAt.present ? reviewedAt.value : this.reviewedAt,
     page: page.present ? page.value : this.page,
     frame: frame.present ? frame.value : this.frame,
   );
@@ -2865,6 +3568,29 @@ class DocumentSegmentRow extends DataClass
       sourceId: data.sourceId.present ? data.sourceId.value : this.sourceId,
       sequence: data.sequence.present ? data.sequence.value : this.sequence,
       content: data.content.present ? data.content.value : this.content,
+      originalContent: data.originalContent.present
+          ? data.originalContent.value
+          : this.originalContent,
+      startOffset: data.startOffset.present
+          ? data.startOffset.value
+          : this.startOffset,
+      endOffset: data.endOffset.present ? data.endOffset.value : this.endOffset,
+      pageTextSha256: data.pageTextSha256.present
+          ? data.pageTextSha256.value
+          : this.pageTextSha256,
+      extractionMethod: data.extractionMethod.present
+          ? data.extractionMethod.value
+          : this.extractionMethod,
+      confidence: data.confidence.present
+          ? data.confidence.value
+          : this.confidence,
+      boundingBoxJson: data.boundingBoxJson.present
+          ? data.boundingBoxJson.value
+          : this.boundingBoxJson,
+      editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
+      reviewedAt: data.reviewedAt.present
+          ? data.reviewedAt.value
+          : this.reviewedAt,
       page: data.page.present ? data.page.value : this.page,
       frame: data.frame.present ? data.frame.value : this.frame,
     );
@@ -2877,6 +3603,15 @@ class DocumentSegmentRow extends DataClass
           ..write('sourceId: $sourceId, ')
           ..write('sequence: $sequence, ')
           ..write('content: $content, ')
+          ..write('originalContent: $originalContent, ')
+          ..write('startOffset: $startOffset, ')
+          ..write('endOffset: $endOffset, ')
+          ..write('pageTextSha256: $pageTextSha256, ')
+          ..write('extractionMethod: $extractionMethod, ')
+          ..write('confidence: $confidence, ')
+          ..write('boundingBoxJson: $boundingBoxJson, ')
+          ..write('editedAt: $editedAt, ')
+          ..write('reviewedAt: $reviewedAt, ')
           ..write('page: $page, ')
           ..write('frame: $frame')
           ..write(')'))
@@ -2884,7 +3619,23 @@ class DocumentSegmentRow extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, sourceId, sequence, content, page, frame);
+  int get hashCode => Object.hash(
+    id,
+    sourceId,
+    sequence,
+    content,
+    originalContent,
+    startOffset,
+    endOffset,
+    pageTextSha256,
+    extractionMethod,
+    confidence,
+    boundingBoxJson,
+    editedAt,
+    reviewedAt,
+    page,
+    frame,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2893,6 +3644,15 @@ class DocumentSegmentRow extends DataClass
           other.sourceId == this.sourceId &&
           other.sequence == this.sequence &&
           other.content == this.content &&
+          other.originalContent == this.originalContent &&
+          other.startOffset == this.startOffset &&
+          other.endOffset == this.endOffset &&
+          other.pageTextSha256 == this.pageTextSha256 &&
+          other.extractionMethod == this.extractionMethod &&
+          other.confidence == this.confidence &&
+          other.boundingBoxJson == this.boundingBoxJson &&
+          other.editedAt == this.editedAt &&
+          other.reviewedAt == this.reviewedAt &&
           other.page == this.page &&
           other.frame == this.frame);
 }
@@ -2902,6 +3662,15 @@ class DocumentSegmentsCompanion extends UpdateCompanion<DocumentSegmentRow> {
   final Value<String> sourceId;
   final Value<int> sequence;
   final Value<String> content;
+  final Value<String?> originalContent;
+  final Value<int?> startOffset;
+  final Value<int?> endOffset;
+  final Value<String?> pageTextSha256;
+  final Value<String?> extractionMethod;
+  final Value<double?> confidence;
+  final Value<String?> boundingBoxJson;
+  final Value<DateTime?> editedAt;
+  final Value<DateTime?> reviewedAt;
   final Value<int?> page;
   final Value<int?> frame;
   final Value<int> rowid;
@@ -2910,6 +3679,15 @@ class DocumentSegmentsCompanion extends UpdateCompanion<DocumentSegmentRow> {
     this.sourceId = const Value.absent(),
     this.sequence = const Value.absent(),
     this.content = const Value.absent(),
+    this.originalContent = const Value.absent(),
+    this.startOffset = const Value.absent(),
+    this.endOffset = const Value.absent(),
+    this.pageTextSha256 = const Value.absent(),
+    this.extractionMethod = const Value.absent(),
+    this.confidence = const Value.absent(),
+    this.boundingBoxJson = const Value.absent(),
+    this.editedAt = const Value.absent(),
+    this.reviewedAt = const Value.absent(),
     this.page = const Value.absent(),
     this.frame = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -2919,6 +3697,15 @@ class DocumentSegmentsCompanion extends UpdateCompanion<DocumentSegmentRow> {
     required String sourceId,
     required int sequence,
     required String content,
+    this.originalContent = const Value.absent(),
+    this.startOffset = const Value.absent(),
+    this.endOffset = const Value.absent(),
+    this.pageTextSha256 = const Value.absent(),
+    this.extractionMethod = const Value.absent(),
+    this.confidence = const Value.absent(),
+    this.boundingBoxJson = const Value.absent(),
+    this.editedAt = const Value.absent(),
+    this.reviewedAt = const Value.absent(),
     this.page = const Value.absent(),
     this.frame = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -2931,6 +3718,15 @@ class DocumentSegmentsCompanion extends UpdateCompanion<DocumentSegmentRow> {
     Expression<String>? sourceId,
     Expression<int>? sequence,
     Expression<String>? content,
+    Expression<String>? originalContent,
+    Expression<int>? startOffset,
+    Expression<int>? endOffset,
+    Expression<String>? pageTextSha256,
+    Expression<String>? extractionMethod,
+    Expression<double>? confidence,
+    Expression<String>? boundingBoxJson,
+    Expression<DateTime>? editedAt,
+    Expression<DateTime>? reviewedAt,
     Expression<int>? page,
     Expression<int>? frame,
     Expression<int>? rowid,
@@ -2940,6 +3736,15 @@ class DocumentSegmentsCompanion extends UpdateCompanion<DocumentSegmentRow> {
       if (sourceId != null) 'source_id': sourceId,
       if (sequence != null) 'sequence': sequence,
       if (content != null) 'content': content,
+      if (originalContent != null) 'original_content': originalContent,
+      if (startOffset != null) 'start_offset': startOffset,
+      if (endOffset != null) 'end_offset': endOffset,
+      if (pageTextSha256 != null) 'page_text_sha256': pageTextSha256,
+      if (extractionMethod != null) 'extraction_method': extractionMethod,
+      if (confidence != null) 'confidence': confidence,
+      if (boundingBoxJson != null) 'bounding_box_json': boundingBoxJson,
+      if (editedAt != null) 'edited_at': editedAt,
+      if (reviewedAt != null) 'reviewed_at': reviewedAt,
       if (page != null) 'page': page,
       if (frame != null) 'frame': frame,
       if (rowid != null) 'rowid': rowid,
@@ -2951,6 +3756,15 @@ class DocumentSegmentsCompanion extends UpdateCompanion<DocumentSegmentRow> {
     Value<String>? sourceId,
     Value<int>? sequence,
     Value<String>? content,
+    Value<String?>? originalContent,
+    Value<int?>? startOffset,
+    Value<int?>? endOffset,
+    Value<String?>? pageTextSha256,
+    Value<String?>? extractionMethod,
+    Value<double?>? confidence,
+    Value<String?>? boundingBoxJson,
+    Value<DateTime?>? editedAt,
+    Value<DateTime?>? reviewedAt,
     Value<int?>? page,
     Value<int?>? frame,
     Value<int>? rowid,
@@ -2960,6 +3774,15 @@ class DocumentSegmentsCompanion extends UpdateCompanion<DocumentSegmentRow> {
       sourceId: sourceId ?? this.sourceId,
       sequence: sequence ?? this.sequence,
       content: content ?? this.content,
+      originalContent: originalContent ?? this.originalContent,
+      startOffset: startOffset ?? this.startOffset,
+      endOffset: endOffset ?? this.endOffset,
+      pageTextSha256: pageTextSha256 ?? this.pageTextSha256,
+      extractionMethod: extractionMethod ?? this.extractionMethod,
+      confidence: confidence ?? this.confidence,
+      boundingBoxJson: boundingBoxJson ?? this.boundingBoxJson,
+      editedAt: editedAt ?? this.editedAt,
+      reviewedAt: reviewedAt ?? this.reviewedAt,
       page: page ?? this.page,
       frame: frame ?? this.frame,
       rowid: rowid ?? this.rowid,
@@ -2981,6 +3804,33 @@ class DocumentSegmentsCompanion extends UpdateCompanion<DocumentSegmentRow> {
     if (content.present) {
       map['content'] = Variable<String>(content.value);
     }
+    if (originalContent.present) {
+      map['original_content'] = Variable<String>(originalContent.value);
+    }
+    if (startOffset.present) {
+      map['start_offset'] = Variable<int>(startOffset.value);
+    }
+    if (endOffset.present) {
+      map['end_offset'] = Variable<int>(endOffset.value);
+    }
+    if (pageTextSha256.present) {
+      map['page_text_sha256'] = Variable<String>(pageTextSha256.value);
+    }
+    if (extractionMethod.present) {
+      map['extraction_method'] = Variable<String>(extractionMethod.value);
+    }
+    if (confidence.present) {
+      map['confidence'] = Variable<double>(confidence.value);
+    }
+    if (boundingBoxJson.present) {
+      map['bounding_box_json'] = Variable<String>(boundingBoxJson.value);
+    }
+    if (editedAt.present) {
+      map['edited_at'] = Variable<DateTime>(editedAt.value);
+    }
+    if (reviewedAt.present) {
+      map['reviewed_at'] = Variable<DateTime>(reviewedAt.value);
+    }
     if (page.present) {
       map['page'] = Variable<int>(page.value);
     }
@@ -3000,6 +3850,15 @@ class DocumentSegmentsCompanion extends UpdateCompanion<DocumentSegmentRow> {
           ..write('sourceId: $sourceId, ')
           ..write('sequence: $sequence, ')
           ..write('content: $content, ')
+          ..write('originalContent: $originalContent, ')
+          ..write('startOffset: $startOffset, ')
+          ..write('endOffset: $endOffset, ')
+          ..write('pageTextSha256: $pageTextSha256, ')
+          ..write('extractionMethod: $extractionMethod, ')
+          ..write('confidence: $confidence, ')
+          ..write('boundingBoxJson: $boundingBoxJson, ')
+          ..write('editedAt: $editedAt, ')
+          ..write('reviewedAt: $reviewedAt, ')
           ..write('page: $page, ')
           ..write('frame: $frame, ')
           ..write('rowid: $rowid')
@@ -7528,7 +8387,10 @@ typedef $$AppPermissionSnapshotsTableCreateCompanionBuilder =
       Value<String?> appSnapshotId,
       required String packageName,
       required String permissionName,
+      Value<String?> permissionLabel,
       required String grantStatus,
+      Value<bool?> granted,
+      Value<bool> flagsAvailable,
       Value<int?> androidSdk,
       Value<String?> protectionLevel,
       required DateTime capturedAt,
@@ -7541,7 +8403,10 @@ typedef $$AppPermissionSnapshotsTableUpdateCompanionBuilder =
       Value<String?> appSnapshotId,
       Value<String> packageName,
       Value<String> permissionName,
+      Value<String?> permissionLabel,
       Value<String> grantStatus,
+      Value<bool?> granted,
+      Value<bool> flagsAvailable,
       Value<int?> androidSdk,
       Value<String?> protectionLevel,
       Value<DateTime> capturedAt,
@@ -7622,8 +8487,23 @@ class $$AppPermissionSnapshotsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get permissionLabel => $composableBuilder(
+    column: $table.permissionLabel,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get grantStatus => $composableBuilder(
     column: $table.grantStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get granted => $composableBuilder(
+    column: $table.granted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get flagsAvailable => $composableBuilder(
+    column: $table.flagsAvailable,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7713,8 +8593,23 @@ class $$AppPermissionSnapshotsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get permissionLabel => $composableBuilder(
+    column: $table.permissionLabel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get grantStatus => $composableBuilder(
     column: $table.grantStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get granted => $composableBuilder(
+    column: $table.granted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get flagsAvailable => $composableBuilder(
+    column: $table.flagsAvailable,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -7803,8 +8698,21 @@ class $$AppPermissionSnapshotsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get permissionLabel => $composableBuilder(
+    column: $table.permissionLabel,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get grantStatus => $composableBuilder(
     column: $table.grantStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get granted =>
+      $composableBuilder(column: $table.granted, builder: (column) => column);
+
+  GeneratedColumn<bool> get flagsAvailable => $composableBuilder(
+    column: $table.flagsAvailable,
     builder: (column) => column,
   );
 
@@ -7915,7 +8823,10 @@ class $$AppPermissionSnapshotsTableTableManager
                 Value<String?> appSnapshotId = const Value.absent(),
                 Value<String> packageName = const Value.absent(),
                 Value<String> permissionName = const Value.absent(),
+                Value<String?> permissionLabel = const Value.absent(),
                 Value<String> grantStatus = const Value.absent(),
+                Value<bool?> granted = const Value.absent(),
+                Value<bool> flagsAvailable = const Value.absent(),
                 Value<int?> androidSdk = const Value.absent(),
                 Value<String?> protectionLevel = const Value.absent(),
                 Value<DateTime> capturedAt = const Value.absent(),
@@ -7926,7 +8837,10 @@ class $$AppPermissionSnapshotsTableTableManager
                 appSnapshotId: appSnapshotId,
                 packageName: packageName,
                 permissionName: permissionName,
+                permissionLabel: permissionLabel,
                 grantStatus: grantStatus,
+                granted: granted,
+                flagsAvailable: flagsAvailable,
                 androidSdk: androidSdk,
                 protectionLevel: protectionLevel,
                 capturedAt: capturedAt,
@@ -7939,7 +8853,10 @@ class $$AppPermissionSnapshotsTableTableManager
                 Value<String?> appSnapshotId = const Value.absent(),
                 required String packageName,
                 required String permissionName,
+                Value<String?> permissionLabel = const Value.absent(),
                 required String grantStatus,
+                Value<bool?> granted = const Value.absent(),
+                Value<bool> flagsAvailable = const Value.absent(),
                 Value<int?> androidSdk = const Value.absent(),
                 Value<String?> protectionLevel = const Value.absent(),
                 required DateTime capturedAt,
@@ -7950,7 +8867,10 @@ class $$AppPermissionSnapshotsTableTableManager
                 appSnapshotId: appSnapshotId,
                 packageName: packageName,
                 permissionName: permissionName,
+                permissionLabel: permissionLabel,
                 grantStatus: grantStatus,
+                granted: granted,
+                flagsAvailable: flagsAvailable,
                 androidSdk: androidSdk,
                 protectionLevel: protectionLevel,
                 capturedAt: capturedAt,
@@ -8053,6 +8973,10 @@ typedef $$DocumentSourcesTableCreateCompanionBuilder =
       Value<int?> provenancePage,
       Value<int?> provenanceFrame,
       Value<String?> provenanceLocator,
+      Value<String?> sourceUrl,
+      Value<String?> documentVersion,
+      Value<String?> importWarnings,
+      Value<DateTime?> reviewedAt,
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<int> rowid,
@@ -8073,6 +8997,10 @@ typedef $$DocumentSourcesTableUpdateCompanionBuilder =
       Value<int?> provenancePage,
       Value<int?> provenanceFrame,
       Value<String?> provenanceLocator,
+      Value<String?> sourceUrl,
+      Value<String?> documentVersion,
+      Value<String?> importWarnings,
+      Value<DateTime?> reviewedAt,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> rowid,
@@ -8262,6 +9190,26 @@ class $$DocumentSourcesTableFilterComposer
 
   ColumnFilters<String> get provenanceLocator => $composableBuilder(
     column: $table.provenanceLocator,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceUrl => $composableBuilder(
+    column: $table.sourceUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get documentVersion => $composableBuilder(
+    column: $table.documentVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get importWarnings => $composableBuilder(
+    column: $table.importWarnings,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get reviewedAt => $composableBuilder(
+    column: $table.reviewedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8473,6 +9421,26 @@ class $$DocumentSourcesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get sourceUrl => $composableBuilder(
+    column: $table.sourceUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get documentVersion => $composableBuilder(
+    column: $table.documentVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get importWarnings => $composableBuilder(
+    column: $table.importWarnings,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get reviewedAt => $composableBuilder(
+    column: $table.reviewedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -8564,6 +9532,24 @@ class $$DocumentSourcesTableAnnotationComposer
 
   GeneratedColumn<String> get provenanceLocator => $composableBuilder(
     column: $table.provenanceLocator,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get sourceUrl =>
+      $composableBuilder(column: $table.sourceUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get documentVersion => $composableBuilder(
+    column: $table.documentVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get importWarnings => $composableBuilder(
+    column: $table.importWarnings,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get reviewedAt => $composableBuilder(
+    column: $table.reviewedAt,
     builder: (column) => column,
   );
 
@@ -8748,6 +9734,10 @@ class $$DocumentSourcesTableTableManager
                 Value<int?> provenancePage = const Value.absent(),
                 Value<int?> provenanceFrame = const Value.absent(),
                 Value<String?> provenanceLocator = const Value.absent(),
+                Value<String?> sourceUrl = const Value.absent(),
+                Value<String?> documentVersion = const Value.absent(),
+                Value<String?> importWarnings = const Value.absent(),
+                Value<DateTime?> reviewedAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -8766,6 +9756,10 @@ class $$DocumentSourcesTableTableManager
                 provenancePage: provenancePage,
                 provenanceFrame: provenanceFrame,
                 provenanceLocator: provenanceLocator,
+                sourceUrl: sourceUrl,
+                documentVersion: documentVersion,
+                importWarnings: importWarnings,
+                reviewedAt: reviewedAt,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -8786,6 +9780,10 @@ class $$DocumentSourcesTableTableManager
                 Value<int?> provenancePage = const Value.absent(),
                 Value<int?> provenanceFrame = const Value.absent(),
                 Value<String?> provenanceLocator = const Value.absent(),
+                Value<String?> sourceUrl = const Value.absent(),
+                Value<String?> documentVersion = const Value.absent(),
+                Value<String?> importWarnings = const Value.absent(),
+                Value<DateTime?> reviewedAt = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
@@ -8804,6 +9802,10 @@ class $$DocumentSourcesTableTableManager
                 provenancePage: provenancePage,
                 provenanceFrame: provenanceFrame,
                 provenanceLocator: provenanceLocator,
+                sourceUrl: sourceUrl,
+                documentVersion: documentVersion,
+                importWarnings: importWarnings,
+                reviewedAt: reviewedAt,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -8978,6 +9980,15 @@ typedef $$DocumentSegmentsTableCreateCompanionBuilder =
       required String sourceId,
       required int sequence,
       required String content,
+      Value<String?> originalContent,
+      Value<int?> startOffset,
+      Value<int?> endOffset,
+      Value<String?> pageTextSha256,
+      Value<String?> extractionMethod,
+      Value<double?> confidence,
+      Value<String?> boundingBoxJson,
+      Value<DateTime?> editedAt,
+      Value<DateTime?> reviewedAt,
       Value<int?> page,
       Value<int?> frame,
       Value<int> rowid,
@@ -8988,6 +9999,15 @@ typedef $$DocumentSegmentsTableUpdateCompanionBuilder =
       Value<String> sourceId,
       Value<int> sequence,
       Value<String> content,
+      Value<String?> originalContent,
+      Value<int?> startOffset,
+      Value<int?> endOffset,
+      Value<String?> pageTextSha256,
+      Value<String?> extractionMethod,
+      Value<double?> confidence,
+      Value<String?> boundingBoxJson,
+      Value<DateTime?> editedAt,
+      Value<DateTime?> reviewedAt,
       Value<int?> page,
       Value<int?> frame,
       Value<int> rowid,
@@ -9070,6 +10090,51 @@ class $$DocumentSegmentsTableFilterComposer
 
   ColumnFilters<String> get content => $composableBuilder(
     column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originalContent => $composableBuilder(
+    column: $table.originalContent,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get startOffset => $composableBuilder(
+    column: $table.startOffset,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get endOffset => $composableBuilder(
+    column: $table.endOffset,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get pageTextSha256 => $composableBuilder(
+    column: $table.pageTextSha256,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get extractionMethod => $composableBuilder(
+    column: $table.extractionMethod,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get confidence => $composableBuilder(
+    column: $table.confidence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get boundingBoxJson => $composableBuilder(
+    column: $table.boundingBoxJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get reviewedAt => $composableBuilder(
+    column: $table.reviewedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9156,6 +10221,51 @@ class $$DocumentSegmentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get originalContent => $composableBuilder(
+    column: $table.originalContent,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get startOffset => $composableBuilder(
+    column: $table.startOffset,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get endOffset => $composableBuilder(
+    column: $table.endOffset,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get pageTextSha256 => $composableBuilder(
+    column: $table.pageTextSha256,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get extractionMethod => $composableBuilder(
+    column: $table.extractionMethod,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get confidence => $composableBuilder(
+    column: $table.confidence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get boundingBoxJson => $composableBuilder(
+    column: $table.boundingBoxJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get reviewedAt => $composableBuilder(
+    column: $table.reviewedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get page => $composableBuilder(
     column: $table.page,
     builder: (column) => ColumnOrderings(column),
@@ -9207,6 +10317,47 @@ class $$DocumentSegmentsTableAnnotationComposer
 
   GeneratedColumn<String> get content =>
       $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<String> get originalContent => $composableBuilder(
+    column: $table.originalContent,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get startOffset => $composableBuilder(
+    column: $table.startOffset,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get endOffset =>
+      $composableBuilder(column: $table.endOffset, builder: (column) => column);
+
+  GeneratedColumn<String> get pageTextSha256 => $composableBuilder(
+    column: $table.pageTextSha256,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get extractionMethod => $composableBuilder(
+    column: $table.extractionMethod,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get confidence => $composableBuilder(
+    column: $table.confidence,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get boundingBoxJson => $composableBuilder(
+    column: $table.boundingBoxJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get editedAt =>
+      $composableBuilder(column: $table.editedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get reviewedAt => $composableBuilder(
+    column: $table.reviewedAt,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get page =>
       $composableBuilder(column: $table.page, builder: (column) => column);
@@ -9298,6 +10449,15 @@ class $$DocumentSegmentsTableTableManager
                 Value<String> sourceId = const Value.absent(),
                 Value<int> sequence = const Value.absent(),
                 Value<String> content = const Value.absent(),
+                Value<String?> originalContent = const Value.absent(),
+                Value<int?> startOffset = const Value.absent(),
+                Value<int?> endOffset = const Value.absent(),
+                Value<String?> pageTextSha256 = const Value.absent(),
+                Value<String?> extractionMethod = const Value.absent(),
+                Value<double?> confidence = const Value.absent(),
+                Value<String?> boundingBoxJson = const Value.absent(),
+                Value<DateTime?> editedAt = const Value.absent(),
+                Value<DateTime?> reviewedAt = const Value.absent(),
                 Value<int?> page = const Value.absent(),
                 Value<int?> frame = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -9306,6 +10466,15 @@ class $$DocumentSegmentsTableTableManager
                 sourceId: sourceId,
                 sequence: sequence,
                 content: content,
+                originalContent: originalContent,
+                startOffset: startOffset,
+                endOffset: endOffset,
+                pageTextSha256: pageTextSha256,
+                extractionMethod: extractionMethod,
+                confidence: confidence,
+                boundingBoxJson: boundingBoxJson,
+                editedAt: editedAt,
+                reviewedAt: reviewedAt,
                 page: page,
                 frame: frame,
                 rowid: rowid,
@@ -9316,6 +10485,15 @@ class $$DocumentSegmentsTableTableManager
                 required String sourceId,
                 required int sequence,
                 required String content,
+                Value<String?> originalContent = const Value.absent(),
+                Value<int?> startOffset = const Value.absent(),
+                Value<int?> endOffset = const Value.absent(),
+                Value<String?> pageTextSha256 = const Value.absent(),
+                Value<String?> extractionMethod = const Value.absent(),
+                Value<double?> confidence = const Value.absent(),
+                Value<String?> boundingBoxJson = const Value.absent(),
+                Value<DateTime?> editedAt = const Value.absent(),
+                Value<DateTime?> reviewedAt = const Value.absent(),
                 Value<int?> page = const Value.absent(),
                 Value<int?> frame = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -9324,6 +10502,15 @@ class $$DocumentSegmentsTableTableManager
                 sourceId: sourceId,
                 sequence: sequence,
                 content: content,
+                originalContent: originalContent,
+                startOffset: startOffset,
+                endOffset: endOffset,
+                pageTextSha256: pageTextSha256,
+                extractionMethod: extractionMethod,
+                confidence: confidence,
+                boundingBoxJson: boundingBoxJson,
+                editedAt: editedAt,
+                reviewedAt: reviewedAt,
                 page: page,
                 frame: frame,
                 rowid: rowid,

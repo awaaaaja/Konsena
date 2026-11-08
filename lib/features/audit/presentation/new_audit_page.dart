@@ -149,7 +149,7 @@ class _NewAuditPageState extends State<NewAuditPage> {
                 onPressed: _busy
                     ? null
                     : () => _create((id) {
-                        context.go('/scan');
+                        context.push('/scan?auditId=$id');
                       }),
                 icon: const Icon(Icons.document_scanner_outlined),
                 label: const Text('Pindai atau impor sumber'),

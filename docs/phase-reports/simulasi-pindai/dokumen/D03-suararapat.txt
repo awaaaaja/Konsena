@@ -1,0 +1,13 @@
+SuaraRapat | Terms of Service
+Version 1.6 | Effective 4 November 2026
+
+1. Microphone access
+The SuaraRapat application requests the Android microphone permission. The app uses the microphone when you tap Start Recording and stops capturing audio when you tap Stop.
+
+2. File retention
+Recordings stay on the device until you delete them or choose Export. You can review the destination before an export begins.
+
+3. User controls
+You can use the written notes feature if you decline the microphone permission. A recording indicator stays visible while a recording is running.
+
+Synthetic QA document | D03

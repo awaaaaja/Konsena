@@ -55,7 +55,11 @@ class AppPermissionSnapshots extends Table {
   )();
   TextColumn get packageName => text()();
   TextColumn get permissionName => text()();
+  TextColumn get permissionLabel => text().nullable()();
   TextColumn get grantStatus => text()();
+  BoolColumn get granted => boolean().nullable()();
+  BoolColumn get flagsAvailable =>
+      boolean().withDefault(const Constant(false))();
   IntColumn get androidSdk => integer().nullable()();
   TextColumn get protectionLevel => text().nullable()();
   DateTimeColumn get capturedAt => dateTime()();
@@ -82,6 +86,10 @@ class DocumentSources extends Table {
   IntColumn get provenancePage => integer().nullable()();
   IntColumn get provenanceFrame => integer().nullable()();
   TextColumn get provenanceLocator => text().nullable()();
+  TextColumn get sourceUrl => text().nullable()();
+  TextColumn get documentVersion => text().nullable()();
+  TextColumn get importWarnings => text().nullable()();
+  DateTimeColumn get reviewedAt => dateTime().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 
@@ -97,6 +105,15 @@ class DocumentSegments extends Table {
       text().references(DocumentSources, #id, onDelete: KeyAction.cascade)();
   IntColumn get sequence => integer()();
   TextColumn get content => text()();
+  TextColumn get originalContent => text().nullable()();
+  IntColumn get startOffset => integer().nullable()();
+  IntColumn get endOffset => integer().nullable()();
+  TextColumn get pageTextSha256 => text().nullable()();
+  TextColumn get extractionMethod => text().nullable()();
+  RealColumn get confidence => real().nullable()();
+  TextColumn get boundingBoxJson => text().nullable()();
+  DateTimeColumn get editedAt => dateTime().nullable()();
+  DateTimeColumn get reviewedAt => dateTime().nullable()();
   IntColumn get page => integer().nullable()();
   IntColumn get frame => integer().nullable()();
 
@@ -248,7 +265,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -264,6 +281,33 @@ class AppDatabase extends _$AppDatabase {
           appPermissionSnapshots,
           appPermissionSnapshots.appSnapshotId,
         );
+        await m.addColumn(
+          appPermissionSnapshots,
+          appPermissionSnapshots.permissionLabel,
+        );
+        await m.addColumn(
+          appPermissionSnapshots,
+          appPermissionSnapshots.granted,
+        );
+        await m.addColumn(
+          appPermissionSnapshots,
+          appPermissionSnapshots.flagsAvailable,
+        );
+      }
+      if (from < 3) {
+        await m.addColumn(documentSources, documentSources.sourceUrl);
+        await m.addColumn(documentSources, documentSources.documentVersion);
+        await m.addColumn(documentSources, documentSources.importWarnings);
+        await m.addColumn(documentSources, documentSources.reviewedAt);
+        await m.addColumn(documentSegments, documentSegments.originalContent);
+        await m.addColumn(documentSegments, documentSegments.startOffset);
+        await m.addColumn(documentSegments, documentSegments.endOffset);
+        await m.addColumn(documentSegments, documentSegments.pageTextSha256);
+        await m.addColumn(documentSegments, documentSegments.extractionMethod);
+        await m.addColumn(documentSegments, documentSegments.confidence);
+        await m.addColumn(documentSegments, documentSegments.boundingBoxJson);
+        await m.addColumn(documentSegments, documentSegments.editedAt);
+        await m.addColumn(documentSegments, documentSegments.reviewedAt);
       }
     },
     beforeOpen: (details) async {

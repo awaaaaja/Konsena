@@ -20,6 +20,8 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  String _query = '';
+  AuditFocus? _filter;
   Future<List<AuditSession>>? _sessions;
   StreamSubscription<void>? _changesSubscription;
 
@@ -79,7 +81,13 @@ class _HistoryPageState extends State<HistoryPage> {
           }
           return _buildHistory(
             context,
-            snapshot.data ?? const <AuditSession>[],
+            (snapshot.data ?? const <AuditSession>[])
+                .where(
+                  (s) =>
+                      s.name.toLowerCase().contains(_query.toLowerCase()) &&
+                      (_filter == null || s.focus == _filter),
+                )
+                .toList(),
           );
         },
       );
@@ -127,7 +135,7 @@ class _HistoryPageState extends State<HistoryPage> {
     List<AuditSession> items,
   ) => Scaffold(
     appBar: AppBar(title: const Text('Riwayat Audit')),
-    body: items.isEmpty
+    body: items.isEmpty && _query.isEmpty && _filter == null
         ? ListView(
             padding: const EdgeInsets.all(KonsenaSpacing.lg),
             children: [
@@ -147,9 +155,37 @@ class _HistoryPageState extends State<HistoryPage> {
           )
         : ListView.builder(
             padding: const EdgeInsets.all(KonsenaSpacing.md),
-            itemCount: items.length,
+            itemCount: items.length + 1,
             itemBuilder: (context, index) {
-              final session = items[index];
+              if (index == 0) {
+                return Column(
+                  children: [
+                    TextField(
+                      decoration: const InputDecoration(
+                        labelText: 'Cari audit',
+                      ),
+                      onChanged: (v) => setState(() => _query = v),
+                    ),
+                    DropdownButton<AuditFocus?>(
+                      value: _filter,
+                      isExpanded: true,
+                      items: [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Semua fokus'),
+                        ),
+                        for (final focus in AuditFocus.values)
+                          DropdownMenuItem(
+                            value: focus,
+                            child: Text(_focusLabel(focus)),
+                          ),
+                      ],
+                      onChanged: (v) => setState(() => _filter = v),
+                    ),
+                  ],
+                );
+              }
+              final session = items[index - 1];
               return Card(
                 child: ListTile(
                   title: Text(session.name),
@@ -157,7 +193,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     '${_focusLabel(session.focus)} · Draft lokal · ${_date(session.updatedAt)}',
                   ),
                   trailing: const Icon(Icons.chevron_right_rounded),
-                  onTap: () => context.push('/audit/${session.id}/sources'),
+                  onTap: () => context.push('/history/${session.id}'),
                 ),
               );
             },

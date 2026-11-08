@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "task": "darkpattern",
+  "model_version": "a0c00228c33327dafed4a74a05bc868b550878b76dbacf5a83045e24f85575f0",
+  "inputs": [
+    {
+      "name": "pixel_values",
+      "dtype": "float32",
+      "shape": [
+        "batch",
+        3,
+        224,
+        224
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "logits",
+      "dtype": "float32",
+      "shape": [
+        "batch",
+        2
+      ]
+    }
+  ],
+  "activation": "softmax",
+  "calibration": {
+    "temperature": 1.0717734625362934,
+    "thresholds": null,
+    "fitted_on": "val"
+  },
+  "token_type_ids": false,
+  "opset": 17,
+  "android_validation": "BLOCKED: run on physical Android before production",
+  "source_run_signature": "a0c00228c33327dafed4a74a05bc868b550878b76dbacf5a83045e24f85575f0"
+}

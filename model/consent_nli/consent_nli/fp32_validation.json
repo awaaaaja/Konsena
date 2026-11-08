@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "checks": {
+    "real_validation_samples": true,
+    "finite_outputs": true,
+    "shape_dtype": true,
+    "golden": true,
+    "agreement": true,
+    "f1_drop": true,
+    "fp32_absolute_logits": true,
+    "argmax": true
+  },
+  "sha256": "ef57b36f620e94bb2ed0d0f153191a0d636fa0e25cddc3459d353c526f1335ca",
+  "file": "consent_nli_fp32.onnx",
+  "bytes": 541430919,
+  "real_validation_samples": 100,
+  "agreement": 1.0,
+  "argmax_agreement": 1.0,
+  "max_abs_logit_difference": 5.364418029785156e-06,
+  "macro_f1_drop": 0.0,
+  "macro_f1_actual": 0.7182341734413403,
+  "macro_f1_reference": 0.7182341734413403,
+  "golden": {
+    "cases": 14,
+    "tokenization_exact": true,
+    "decoded_label_agreement": 1.0,
+    "max_abs_logit_difference": 1.6987323760986328e-06,
+    "status": "PASS"
+  },
+  "latency": {
+    "p50_ms": 132.44925949993558,
+    "p95_ms": 144.2954766501316,
+    "samples": 100,
+    "device": "Kaggle/local CPU only; NOT Android benchmark"
+  },
+  "peak_ram": "not measured",
+  "android_status": "BLOCKED: physical-device loading, tokenization parity, latency, memory and battery not tested"
+}

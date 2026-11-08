@@ -2,13 +2,14 @@
 
 ## Status
 
-**IN_PROGRESS — READ/THINK complete; device connected, acceptance pending.** An
-Android phone is now connected and identified as Samsung SM-A556E (model
-SM-A556E, API 36). The initial READ probe had found no target, but a follow-up
-probe after the operator's update now finds serial `RRCY102L98L` in `device`
-state. BUILD may proceed. This connection alone is not device acceptance; the
-real snapshot/Settings/refresh/uninstall checks still need to be performed and
-recorded. Phase 04 remains `NOT_STARTED`.
+**PASS.** Samsung SM-A556E (serial `RRCY102L98L`, Android API 36) verified S04/S05
+and Android Settings. Real app `jalanku` showed `ACCESS_FINE_LOCATION` granted,
+consistent with Settings; returning from Settings refreshed capture time. An
+owned disposable fixture verified granted, denied, Settings comparison,
+refresh, uninstall/requery, and historical/unavailable handling without
+changing any third-party permission. Flutter (97 tests), analyze, Gradle tests
+(JDK 21), debug APK build/install, source/merged-manifest review and diff checks
+pass. Phase 04 is now unblocked but remains `NOT_STARTED`.
 
 ## READ — repository and environment findings
 
@@ -48,7 +49,7 @@ recorded. Phase 04 remains `NOT_STARTED`.
   does not add the broad permission. The OS-visible set must be labeled as
   limited, not exhaustive.
 
-## THINK — proposed implementation after blocker clears
+## THINK — implementation decisions
 
 ### Contract and behavior
 
@@ -120,22 +121,59 @@ recorded. Phase 04 remains `NOT_STARTED`.
   working-tree changes. If snapshots have shipped, preserve database migration
   compatibility and use a forward migration rather than destructive reset.
 
+## BUILD — implementation and evidence
+
+- Native MethodChannel `id.konsena/permissions` lists only launcher-visible
+  applications using the declared launcher `<queries>` intent, returns requested
+  permission/grant facts and timestamps, and opens only the user-selected app's
+  Android details Settings page. No `QUERY_ALL_PACKAGES` was added.
+- S04/S05 are wired to the inspector; UI explains limited visibility and that
+  grant facts are not usage tracking. Snapshot data is encrypted in Drift schema
+  v2, with application/permission provenance and cascade cleanup.
+- Automated tests cover v1→v2 migration, encrypted snapshot persistence and
+  cascade deletion, empty-permission snapshots, MethodChannel contract/native
+  grant mapping, S04 search/empty states and S05 fact/Settings behavior.
+- Device: latest debug APK rebuilt and installed successfully at
+  `build/app/outputs/flutter-apk/app-debug.apk`. Capture
+  `/tmp/opencode/phase03/s04_verified_top.png` shows launcher-visible apps
+  including `jalanku`; `settings_permissions.png` records Android Settings.
+  S05 snapshot and refresh were inspected via Android accessibility hierarchy. For
+  `jalanku`, Android Settings showed Camera/Location/Microphone allowed and no
+  denied permissions; S05 showed `ACCESS_FINE_LOCATION` as `Diberikan`. After
+  returning from Settings, the capture timestamp advanced from
+  `2026-11-08 00:52:52.545` to `2026-11-08 00:54:47.571`.
+- Owned disposable fixture `id.konsena.phase03_permission_fixture` requested
+  CAMERA. On SM-A556E/API 36, Android reported the permission granted and S05
+  showed `Diberikan`; after `pm revoke` on this fixture only, Android Settings
+  showed Camera under “Tidak diizinkan” and S05 showed `Belum diberikan`.
+  Returning from Settings refreshed the displayed capture time. The fixture was
+  then uninstalled; refreshing S05 showed the unavailable/not-current message,
+  and S04 refresh/search no longer found its package. No third-party app or
+  permission was changed. Screenshots: `fixture_granted.png`,
+  `fixture_denied_settings.png`, `fixture_uninstalled_list.png` in
+  `/tmp/opencode/phase03/`.
+
 ## REVIEW — evidence available at this gate
 
 | Check | Result | Evidence |
 |---|---|---|
 | Phase 02 prerequisite | **PASS** | `PHASE_STATUS.md` and Phase 02 final gate |
 | Flutter/Android SDK and Gradle wrapper audit | **READ** | Flutter 3.47.8/Dart 3.13.7; SDK platforms 35/36; wrapper present |
-| Manifest and current native/Flutter contract | **READ** | Existing PROCESS_TEXT-only query; no permission channel; S04/S05 placeholders |
-| Device/emulator available | **NO — BLOCKER** | ADB 37.0.1 lists zero devices; emulator executable/AVD tooling absent |
-| Native/Kotlin/Flutter implementation tests | **NOT_RUN** | BUILD intentionally stopped before code changes |
-| Device acceptance: real snapshot vs Settings, refresh, uninstall, API level | **NOT_RUN** | No Android target available |
-| Phase 03 analyze/full tests/Gradle/APK | **NOT_RUN** | No Phase 03 code changed; Phase 02 results do not count as Phase 03 verification |
+| Manifest query scope | **PASS** | Explicit launcher query is present, `QUERY_ALL_PACKAGES` absent; merged manifest also contains file-picker intents from dependencies |
+| Device/emulator available | **PASS** | Samsung SM-A556E, API 36, serial `RRCY102L98L` |
+| `flutter analyze` | **PASS** | No issues found after Phase 03 changes |
+| Focused Flutter inspector/persistence tests | **PASS** | 20 tests passed for audit persistence and inspector features |
+| Full Flutter test suite | **PASS** | `flutter test` — all 97 tests passed after updating S04/S05 route expectations and malformed-package recovery |
+| Android app Kotlin unit tests | **PASS** | `:app:testDebugUnitTest` passed in `./gradlew test` |
+| Full `./gradlew test` | **PASS** | `BUILD SUCCESSFUL` in 8m15s using process-local Temurin 21.0.13; all plugin and app unit-test tasks completed |
+| Debug APK + install | **PASS** | Latest `flutter build apk --debug`; `adb install -r` succeeded on SM-A556E |
+| Device snapshot vs Settings + return refresh | **PASS (owned fixture + real app)** | Jalanku location and fixture CAMERA granted/denied facts matched Settings; returning refreshed capture time |
+| Denied permission and uninstall/requery | **PASS (owned fixture)** | Camera denied matched S05; uninstalled fixture disappeared from S04 and S05 displayed historical/unavailable state |
 
 ## GATE
 
-**IN_PROGRESS — device prerequisite met, device acceptance not yet established.**
-Build and test on the connected SM-A556E/API 36. Do not proceed to Phase 04
-until its real PackageManager snapshot, OS Settings comparison, refresh, and
-uninstall behavior have been checked and the final mandatory tests pass. Do not
-add `QUERY_ALL_PACKAGES`.
+**PASS — Phase 03 gate complete.** Phase 02 remains PASS; all required Flutter
+and Gradle checks pass, the latest APK is installed, and device snapshot/Settings,
+refresh, denied and uninstall/requery checks pass on SM-A556E/API 36. No
+third-party permission was modified and `QUERY_ALL_PACKAGES` is absent. Phase 04
+is the next phase and is `NOT_STARTED`.

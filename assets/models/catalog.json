@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "defaultEngine": "unavailable",
+  "releaseModelsEnabled": false,
+  "models": [
+    {
+      "id": "consent_nli",
+      "name": "Consent NLI",
+      "sourceDirectory": "model/consent_nli/consent_nli",
+      "version": "fd543a14deab68081bedc6a9f848932e69594f9993384dd16fdac6bb6900c12c",
+      "status": "candidate_fp32",
+      "reason": "QA internal lulus vektor Android; fitur tetap nonaktif sampai lisensi, kualitas dan budget perangkat disetujui.",
+      "readiness": "QA_ONLY",
+      "releaseEnabled": false,
+      "variants": [
+        {
+          "file": "consent_nli_fp32.onnx",
+          "sha256": "ef57b36f620e94bb2ed0d0f153191a0d636fa0e25cddc3459d353c526f1335ca",
+          "validation": "export_pass"
+        },
+        {
+          "file": "consent_nli_int8.onnx",
+          "sha256": "b6ba1cad1cc7e98bf1decc6ed2ef97e2f58e9bd9fd370baed99c5bebb112ce72",
+          "validation": "rejected_int8"
+        }
+      ]
+    },
+    {
+      "id": "consentgap",
+      "name": "ConsentGap 5 kelas",
+      "sourceDirectory": "model/consentgap",
+      "version": "a642ef39df0643acde1bdfe64762d2172f8aff5875b90f22da92d8f08f76adee",
+      "status": "demo_only",
+      "readiness": "QUARANTINED",
+      "releaseEnabled": false,
+      "reason": "Paket demonstrasi gagal uji kesetaraan hasil.",
+      "variants": [
+        {
+          "file": "consentgap_5class_fp32.onnx",
+          "sha256": "1fc3b152a6af1c9decb8d4aa8dbad5871efe198904d4a43edfff4ebe32c57733",
+          "validation": "failed_parity"
+        }
+      ]
+    },
+    {
+      "id": "dark_pattern",
+      "name": "Dark Pattern",
+      "sourceDirectory": "model/dark_pattern/dark_pattern",
+      "version": "a0c00228c33327dafed4a74a05bc868b550878b76dbacf5a83045e24f85575f0",
+      "status": "candidate_fp32",
+      "reason": "QA tensor Android lulus; preprocessing screenshot, lisensi dan kualitas belum memenuhi gate rilis.",
+      "readiness": "QA_ONLY",
+      "releaseEnabled": false,
+      "variants": [
+        {
+          "file": "dark_pattern_fp32.onnx",
+          "sha256": "62a274110e7b70a34872b357c7091fbf2f442f9d62cf5cd2fb0afd3a1b901229",
+          "validation": "export_pass"
+        },
+        {
+          "file": "dark_pattern_int8.onnx",
+          "sha256": "490092a628738d3b67b79dc860c9ea46c83506308ff51f56f5e2836db7324b4e",
+          "validation": "rejected_int8"
+        }
+      ]
+    },
+    {
+      "id": "privacy_classifier",
+      "name": "Privacy Classifier",
+      "sourceDirectory": "model/privacy_classifier/privacy_classifier",
+      "version": "85c9fa3d1615afc9d392d1b358211d00a0b03df710d9093f280b29bc3b824f93",
+      "status": "experiment_only",
+      "reason": "QA internal lulus vektor Android; model eksperimen release_eligible=false tetap nonaktif.",
+      "readiness": "QA_ONLY",
+      "releaseEnabled": false,
+      "variants": [
+        {
+          "file": "privacy_classifier_fp32.onnx",
+          "sha256": "15fbfb2da162cb196b0b7a0526840e983caaa5a7d18029c61bfea304d812f41e",
+          "validation": "export_pass"
+        },
+        {
+          "file": "privacy_classifier_int8.onnx",
+          "sha256": "ee182d8af8b1143605639a796ecd1d054f87fc1cba8cc7726c8d90e5e47cc803",
+          "validation": "rejected_int8"
+        }
+      ]
+    }
+  ]
+}

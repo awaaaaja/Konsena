@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/native.dart';
@@ -35,12 +36,12 @@ void main() {
   });
 
   test(
-    'schema version 2 creates all local tables with FK enforcement',
+    'schema version 3 creates all local tables with FK enforcement',
     () async {
-      expect(db.schemaVersion, 2);
+      expect(db.schemaVersion, 3);
       await repository.create(name: 'Migration fixture');
       final version = await db.customSelect('PRAGMA user_version').getSingle();
-      expect(version.data.values.single, 2);
+      expect(version.data.values.single, 3);
       final foreignKeys = await db
           .customSelect('PRAGMA foreign_keys')
           .getSingle();
@@ -62,25 +63,59 @@ void main() {
     },
   );
 
-  test('schema v1 upgrades permission snapshot storage to v2', () async {
+  test('schema v1 upgrades permission snapshot storage to v3', () async {
     final audit = await repository.create(name: 'Migration audit');
     await db.close();
-    final legacy = AppDatabase(
+    final legacyWithPhase04Columns = AppDatabase(
       NativeDatabase(File('${temp.path}/test.sqlite')),
     );
-    await legacy.customStatement('DROP TABLE application_snapshots');
-    await legacy.customStatement(
-      'ALTER TABLE app_permission_snapshots DROP COLUMN app_snapshot_id',
+    for (final column in const [
+      'source_url',
+      'document_version',
+      'import_warnings',
+      'reviewed_at',
+    ]) {
+      await legacyWithPhase04Columns.customStatement(
+        'ALTER TABLE document_sources DROP COLUMN $column',
+      );
+    }
+    for (final column in const [
+      'original_content',
+      'start_offset',
+      'end_offset',
+      'page_text_sha256',
+      'extraction_method',
+      'confidence',
+      'bounding_box_json',
+      'edited_at',
+      'reviewed_at',
+    ]) {
+      await legacyWithPhase04Columns.customStatement(
+        'ALTER TABLE document_segments DROP COLUMN $column',
+      );
+    }
+    await legacyWithPhase04Columns.customStatement(
+      'DROP TABLE application_snapshots',
     );
-    await legacy.customStatement('PRAGMA user_version = 1');
-    await legacy.close();
+    for (final column in const [
+      'app_snapshot_id',
+      'permission_label',
+      'granted',
+      'flags_available',
+    ]) {
+      await legacyWithPhase04Columns.customStatement(
+        'ALTER TABLE app_permission_snapshots DROP COLUMN $column',
+      );
+    }
+    await legacyWithPhase04Columns.customStatement('PRAGMA user_version = 1');
+    await legacyWithPhase04Columns.close();
 
     db = AppDatabase(NativeDatabase(File('${temp.path}/test.sqlite')));
     repository = AuditRepository(database: db, files: files, cipher: cipher);
     await repository.get(audit.id);
-    expect(db.schemaVersion, 2);
+    expect(db.schemaVersion, 3);
     final version = await db.customSelect('PRAGMA user_version').getSingle();
-    expect(version.data.values.single, 2);
+    expect(version.data.values.single, 3);
     final columns = await db
         .customSelect('PRAGMA table_info(app_permission_snapshots)')
         .get();
@@ -94,6 +129,64 @@ void main() {
     expect(
       tables.map((row) => row.read<String>('name')),
       contains('application_snapshots'),
+    );
+  });
+
+  test('schema v2 upgrades source and segment provenance to v3', () async {
+    await repository.create(name: 'V2 migration');
+    await db.close();
+    final legacy = AppDatabase(
+      NativeDatabase(File('${temp.path}/test.sqlite')),
+    );
+    for (final column in const [
+      'source_url',
+      'document_version',
+      'import_warnings',
+      'reviewed_at',
+    ]) {
+      await legacy.customStatement(
+        'ALTER TABLE document_sources DROP COLUMN $column',
+      );
+    }
+    for (final column in const [
+      'original_content',
+      'start_offset',
+      'end_offset',
+      'page_text_sha256',
+      'extraction_method',
+      'confidence',
+      'bounding_box_json',
+      'edited_at',
+      'reviewed_at',
+    ]) {
+      await legacy.customStatement(
+        'ALTER TABLE document_segments DROP COLUMN $column',
+      );
+    }
+    await legacy.customStatement('PRAGMA user_version = 2');
+    await legacy.close();
+
+    db = AppDatabase(NativeDatabase(File('${temp.path}/test.sqlite')));
+    repository = AuditRepository(database: db, files: files, cipher: cipher);
+    await repository.listSessions();
+    final version = await db.customSelect('PRAGMA user_version').getSingle();
+    expect(version.data.values.single, 3);
+    final segmentColumns = await db
+        .customSelect('PRAGMA table_info(document_segments)')
+        .get();
+    expect(
+      segmentColumns.map((row) => row.read<String>('name')),
+      containsAll([
+        'original_content',
+        'start_offset',
+        'end_offset',
+        'page_text_sha256',
+        'extraction_method',
+        'confidence',
+        'bounding_box_json',
+        'edited_at',
+        'reviewed_at',
+      ]),
     );
   });
 
@@ -117,7 +210,10 @@ void main() {
             auditId: audit.id,
             packageName: 'com.example.shop',
             permissionName: 'android.permission.CAMERA',
+            permissionLabel: 'Camera',
             grantStatus: 'declared_not_granted',
+            granted: false,
+            flagsAvailable: true,
             androidSdk: 36,
             protectionLevel: '1',
             capturedAt: capturedAt,
@@ -136,9 +232,31 @@ void main() {
         persisted.single.permissions.single.grantStatus,
         'declared_not_granted',
       );
-      final raw = await db.select(db.applicationSnapshots).getSingle();
-      expect(raw.packageName, isNot('com.example.shop'));
-      expect(raw.appLabel, isNot('Shop Example'));
+      expect(persisted.single.permissions.single.permissionLabel, 'Camera');
+      expect(persisted.single.permissions.single.granted, isFalse);
+      expect(persisted.single.permissions.single.flagsAvailable, isTrue);
+      await repository.saveApplicationSnapshot(
+        auditId: audit.id,
+        packageName: 'com.example.empty',
+        appLabel: 'No Permissions App',
+        versionName: null,
+        snapshotStatus: 'available',
+        visibilityScope: 'launcher_query',
+        androidSdk: 36,
+        capturedAt: capturedAt,
+        permissions: const [],
+      );
+      final includingEmpty = await repository.applicationSnapshots(audit.id);
+      expect(includingEmpty, hasLength(2));
+      expect(
+        includingEmpty
+            .singleWhere((item) => item.packageName == 'com.example.empty')
+            .permissions,
+        isEmpty,
+      );
+      final rawRows = await db.select(db.applicationSnapshots).get();
+      expect(rawRows.first.packageName, isNot('com.example.shop'));
+      expect(rawRows.first.appLabel, isNot('Shop Example'));
       await repository.deleteAudit(audit.id);
       expect(await db.select(db.applicationSnapshots).get(), isEmpty);
       expect(await db.select(db.appPermissionSnapshots).get(), isEmpty);
@@ -240,6 +358,72 @@ void main() {
       expect(await db.select(db.documentSegments).get(), isEmpty);
       expect(await db.select(db.evidenceReferences).get(), isEmpty);
       expect(await files.listStoredRelativePaths(), isEmpty);
+    },
+  );
+
+  test(
+    'imported paragraphs encrypt originals and save edits idempotently',
+    () async {
+      final audit = await repository.create();
+      final source = await repository.attachSource(
+        auditId: audit.id,
+        bytes: utf8.encode('original source'),
+        type: AuditSourceType.terms,
+        mediaType: 'text/plain; charset=utf-8',
+        sourceUrl: 'https://example.test/terms',
+        documentVersion: '2026-11',
+        importWarnings: 'OCR needs review',
+      );
+      expect(source.type, AuditSourceType.terms);
+      expect(source.sourceUrl, 'https://example.test/terms');
+      expect(source.documentVersion, '2026-11');
+      expect(source.importWarnings, 'OCR needs review');
+      final segment = ImportedTextSegment(
+        sequence: 0,
+        text: 'Original paragraph',
+        originalText: ' Original paragraph ',
+        page: 2,
+        startOffset: 4,
+        endOffset: 24,
+        pageTextSha256: List.filled(64, 'a').join(),
+        extractionMethod: 'pdfText',
+      );
+      await repository.saveImportedSegments(
+        sourceId: source.id,
+        segments: [segment],
+        reviewed: false,
+      );
+      final firstRows = await db.select(db.documentSegments).get();
+      expect(
+        firstRows.single.originalContent,
+        isNot(contains('Original paragraph')),
+      );
+      expect(
+        await cipher.decryptText(firstRows.single.originalContent!),
+        ' Original paragraph ',
+      );
+      final originalId = firstRows.single.id;
+      await repository.saveImportedSegments(
+        sourceId: source.id,
+        segments: [segment],
+        reviewed: false,
+      );
+      expect(
+        (await db.select(db.documentSegments).get()).single.id,
+        originalId,
+      );
+      await repository.updateImportedSegment(
+        sourceId: source.id,
+        segmentId: originalId,
+        text: 'Corrected paragraph',
+        reviewed: true,
+      );
+      final updated = (await repository.documentSegments(source.id)).single;
+      expect(updated.text, 'Corrected paragraph');
+      expect(updated.originalText, ' Original paragraph ');
+      expect(updated.editedAt, isNotNull);
+      expect(updated.reviewedAt, isNotNull);
+      expect((await repository.source(source.id)).reviewedAt, isNotNull);
     },
   );
 

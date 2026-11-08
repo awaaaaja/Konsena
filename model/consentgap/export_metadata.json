@@ -1,0 +1,9 @@
+{
+  "profile": "SYNTHETIC_DEMONSTRATION_NOT_FOR_RELEASE",
+  "onnx_file": "consentgap_5class_fp32.onnx",
+  "onnx_sha256": "1fc3b152a6af1c9decb8d4aa8dbad5871efe198904d4a43edfff4ebe32c57733",
+  "source_checkpoint_signature": "a642ef39df0643acde1bdfe64762d2172f8aff5875b90f22da92d8f08f76adee",
+  "validation_macro_f1": 0.743604127270189,
+  "test_macro_f1": 0.7257136087749511,
+  "status": "DEMO_ONLY_NOT_FOR_RELEASE"
+}

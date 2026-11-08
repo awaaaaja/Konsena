@@ -1,6 +1,6 @@
 # PHASE_STATUS
 
-Terakhir diperbarui: **2026-11-08** (Phase 03 device connected; implementation in progress)
+Terakhir diperbarui **2026-11-08** untuk handoff Phase 06 Terpadu.
 
 | Phase | Nama | Status | Laporan |
 |---|---|---|---|
@@ -9,15 +9,13 @@ Terakhir diperbarui: **2026-11-08** (Phase 03 device connected; implementation i
 | 01B | Navigasi lima tab, route registry S00–S39, draft-safe shell | **PASS — headed browser visual check** | [PHASE_01B_REPORT.md](PHASE_01B_REPORT.md) |
 | 01C | Aksesibilitas, responsive states, visual QA | **PASS — device/TalkBack ditunda; NOT_RUN** | [PHASE_01C_REPORT.md](PHASE_01C_REPORT.md) |
 | 02 | Domain data, penyimpanan lokal, dan audit workspace | **PASS — automated gate; device/manual checks NOT_RUN** | [PHASE_02_REPORT.md](PHASE_02_REPORT.md) |
-| 03 | Audit izin aplikasi (PackageManager), detail izin, sumber | **IN_PROGRESS — SM-A556E / API 36 connected; device acceptance pending** | [PHASE_03_REPORT.md](PHASE_03_REPORT.md) |
-| 04 | Policy scanner manual + evidence map | `NOT_STARTED` | — |
-| 05 | LiveScan kamera, OCR fallback, gap review | `NOT_STARTED` | — |
-| 06 | Dark pattern screenshot, manual annotations, report local | `NOT_STARTED` | — |
-| 07 | Auth opsional, RLS aman, cloud sync selektif | `NOT_STARTED` | — |
-| 08 | PDF report, share, delete data | `NOT_STARTED` | — |
-| 09 | Release hardening / pre-ML pilot | `NOT_STARTED` | — |
-| 10 | ONNX integration (tertunda sampai model diserahkan) | `NOT_STARTED` | — |
-| 11 | Usability, security & privacy review, beta | `NOT_STARTED` | — |
+| 03 | Audit izin aplikasi (PackageManager), detail izin, sumber | **PASS — SM-A556E / API 36; automated + device acceptance** | [PHASE_03_REPORT.md](PHASE_03_REPORT.md) |
+| 04 | Impor kebijakan dan OCR | **PASS — automated + SM-A556E / Android 16 device acceptance** | [PHASE_04_REPORT.md](PHASE_04_REPORT.md) |
+| 05 | LiveScan kamera, OCR fallback, gap review | **PASS — device acceptance confirmed by operator** | [PHASE_05_REPORT.md](PHASE_05_REPORT.md) |
+| 06 Terpadu | Screenshot/evidence, audit, model QA, pilot dan rilis Android (scope legacy 06–11) | **BLOCKED untuk MVP AI. Tiga FP32 lulus QA Android. Alur Dark Pattern dari PNG dan tampilan hasil S31 terverifikasi. ConsentGap gagal parity ekspor. Cloud dan rilis publik tertahan.** | [PHASE_06_TERPADU_REPORT.md](PHASE_06_TERPADU_REPORT.md) |
+
+> Pemetaan: baris fase legacy 06–11 digabung menjadi satu siklus Phase 06
+> Terpadu sesuai prompt operator; laporan Phase 00–05 tetap histori.
 
 ---
 
@@ -44,8 +42,8 @@ Bukti inti yang **sudah** dijalankan:
 
 **Gate lanjut:** Phase 01B/01C berstatus **PASS**; pemeriksaan TalkBack/device ditunda atas arahan operator dan tetap tercatat `NOT_RUN`. Phase 02 tetap `NOT_STARTED` dan tidak dimulai dalam lingkup pekerjaan ini.
 
-**Prasyarat sebelum Phase 07** (belum terpenuhi):
+**Prasyarat cloud dalam Phase 06 Terpadu (legacy Phase 07)** belum terpenuhi.
 
 1. `KNOWN_ISSUES` **P0-001** — rotasi password DB, PAT, dan secret key.
 2. `KNOWN_ISSUES` **P1-002** — putuskan tujuan project remote yang benar.
-3. Alur login + explicit consent + pemilihan record (cakupan Phase 07 sendiri).
+3. Alur login, persetujuan eksplisit, dan pemilihan record.

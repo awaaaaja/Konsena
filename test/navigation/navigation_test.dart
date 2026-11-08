@@ -12,13 +12,19 @@ import 'package:konsena_ai/core/supabase/guest_cloud_gateway.dart';
 import 'package:konsena_ai/features/audit/presentation/new_audit_page.dart';
 import 'package:konsena_ai/features/about/presentation/about_page.dart';
 import 'package:konsena_ai/features/history/presentation/history_page.dart';
+import 'package:konsena_ai/features/live_scan/presentation/live_scan_pages.dart';
 import 'package:konsena_ai/features/home/presentation/dashboard_page.dart';
 import 'package:konsena_ai/features/navigation/presentation/route_screen_page.dart';
+import 'package:konsena_ai/features/permission_inspector/presentation/app_picker_page.dart';
+import 'package:konsena_ai/features/permission_inspector/presentation/app_permission_detail_page.dart';
 import 'package:konsena_ai/features/onboarding/presentation/onboarding_page.dart';
 import 'package:konsena_ai/features/privacy_setup/presentation/privacy_setup_page.dart';
 import 'package:konsena_ai/features/profile/presentation/profile_page.dart';
 import 'package:konsena_ai/features/scan/presentation/scan_hub_page.dart';
+import 'package:konsena_ai/features/policy_import/presentation/policy_import_pages.dart';
 import 'package:konsena_ai/features/settings/presentation/settings_page.dart';
+import 'package:konsena_ai/features/settings/presentation/data_controls_page.dart';
+import 'package:konsena_ai/features/consent_ui/presentation/screenshot_pages.dart';
 
 GoRouter _router({AuditDraftStore? drafts, String initialLocation = '/home'}) =>
     createAppRouter(
@@ -64,7 +70,14 @@ void main() {
       for (final spec in RouteRegistry.screens) {
         final path = _samplePath(spec, audit.id);
         router.go(path);
-        await tester.pumpAndSettle();
+        if (spec.id == ScreenId.s09) {
+          // A live camera preview intentionally keeps a progress indicator
+          // active in this platform-free route smoke test.
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 100));
+        } else {
+          await tester.pumpAndSettle();
+        }
         expect(
           tester.takeException(),
           isNull,
@@ -93,6 +106,16 @@ void main() {
           ScreenId.s02 => find.byType(PrivacySetupPage),
           ScreenId.s03 => find.byType(DashboardPage),
           ScreenId.s06 => find.byType(ScanHubPage),
+          ScreenId.s07 => find.byType(PolicyImportPage),
+          ScreenId.s08 => find.byType(LiveScanPermissionPage),
+          ScreenId.s09 => find.byType(LiveScanCapturePage),
+          ScreenId.s11 => find.byType(PolicyReviewPage),
+          ScreenId.s12 => find.byType(ScreenshotImportPage),
+          ScreenId.s13 => find.byType(ScreenshotReviewPage),
+          ScreenId.s36 => find.byType(DataControlsPage),
+          ScreenId.s25 => find.byType(PolicyDocumentTypePage),
+          ScreenId.s26 => find.byType(PolicyImportProgressPage),
+          ScreenId.s28 => find.byType(PolicyDocumentReadPage),
           ScreenId.s19 => find.byType(HistoryPage),
           ScreenId.s20 => find.byType(SettingsPage),
           ScreenId.s21 ||
@@ -100,6 +123,10 @@ void main() {
           ScreenId.s37 => find.byType(ProfilePage),
           ScreenId.s23 => find.byType(AboutPage),
           ScreenId.s24 => find.byType(NewAuditPage),
+          ScreenId.s04 => find.byType(AppPickerPage),
+          ScreenId.s05 => find.byType(AppPermissionDetailPage),
+          ScreenId.s35 => find.byType(LiveScanPermissionRecoveryPage),
+          ScreenId.s39 => find.byType(LiveScanTutorialPage),
           ScreenId.s16 => find.text('Bukti belum tersedia'),
           _ => find.byType(RouteScreenPage),
         };
@@ -224,10 +251,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Pilih Aplikasi'), findsWidgets);
-    expect(
-      find.textContaining('Draft audit: ${drafts.latest!.id}'),
-      findsOneWidget,
-    );
+    final picker = tester.widget<AppPickerPage>(find.byType(AppPickerPage));
+    expect(picker.auditId, drafts.latest!.id);
     router.pop();
     await tester.pumpAndSettle();
     expect(find.byType(NewAuditPage), findsOneWidget);
@@ -247,7 +272,7 @@ void main() {
       router.pop();
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('LiveScan layar laptop'));
+      await tester.tap(find.text('LiveScan'));
       await tester.pumpAndSettle();
       expect(find.text('Panduan LiveScan'), findsWidgets);
       router.pop();

@@ -1,0 +1,8 @@
+{
+  "run": "/kaggle/working/konsena_tuning/onnx_candidates/artifacts/training/nli_student",
+  "task": "nli",
+  "fp32_file": "consent_nli_fp32.onnx",
+  "sha256": "ef57b36f620e94bb2ed0d0f153191a0d636fa0e25cddc3459d353c526f1335ca",
+  "profile": "FULL_TRAINING",
+  "release_eligible": true
+}

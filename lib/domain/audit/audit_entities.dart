@@ -46,6 +46,9 @@ class AppPermissionSnapshot {
     required this.capturedAt,
     this.androidSdk,
     this.protectionLevel,
+    this.permissionLabel,
+    this.granted,
+    this.flagsAvailable = false,
   });
 
   final String id;
@@ -56,6 +59,9 @@ class AppPermissionSnapshot {
   final DateTime capturedAt;
   final int? androidSdk;
   final String? protectionLevel;
+  final String? permissionLabel;
+  final bool? granted;
+  final bool flagsAvailable;
 }
 
 class ApplicationSnapshotRecord {
@@ -102,6 +108,10 @@ class DocumentSource {
     this.provenancePage,
     this.provenanceFrame,
     this.provenanceLocator,
+    this.sourceUrl,
+    this.documentVersion,
+    this.importWarnings,
+    this.reviewedAt,
   });
 
   final String id;
@@ -120,6 +130,10 @@ class DocumentSource {
   final int? provenancePage;
   final int? provenanceFrame;
   final String? provenanceLocator;
+  final String? sourceUrl;
+  final String? documentVersion;
+  final String? importWarnings;
+  final DateTime? reviewedAt;
 }
 
 class DocumentSegment {
@@ -130,6 +144,15 @@ class DocumentSegment {
     required this.text,
     this.page,
     this.frame,
+    this.originalText,
+    this.startOffset,
+    this.endOffset,
+    this.pageTextSha256,
+    this.extractionMethod,
+    this.confidence,
+    this.boundingBoxJson,
+    this.editedAt,
+    this.reviewedAt,
   });
 
   final String id;
@@ -138,6 +161,43 @@ class DocumentSegment {
   final String text;
   final int? page;
   final int? frame;
+  final String? originalText;
+  final int? startOffset;
+  final int? endOffset;
+  final String? pageTextSha256;
+  final String? extractionMethod;
+  final double? confidence;
+  final String? boundingBoxJson;
+  final DateTime? editedAt;
+  final DateTime? reviewedAt;
+}
+
+class ImportedTextSegment {
+  const ImportedTextSegment({
+    required this.sequence,
+    required this.text,
+    required this.originalText,
+    required this.page,
+    required this.startOffset,
+    required this.endOffset,
+    required this.pageTextSha256,
+    required this.extractionMethod,
+    this.confidence,
+    this.boundingBoxJson,
+  });
+
+  final int sequence;
+  final String text;
+  final String originalText;
+  final int page;
+
+  /// UTF-16 code-unit offsets into the page's original extracted text.
+  final int startOffset;
+  final int endOffset;
+  final String pageTextSha256;
+  final String extractionMethod;
+  final double? confidence;
+  final String? boundingBoxJson;
 }
 
 class ConsentUiSource {

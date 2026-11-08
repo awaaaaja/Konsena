@@ -1,0 +1,130 @@
+{
+  "D01": {
+    "file": "dokumen/D01-ruangnota.pdf",
+    "permission": "camera",
+    "nli_expected": "entailment",
+    "clause": "Aplikasi RuangNota meminta izin Kamera Android. Izin kamera digunakan untuk memotret struk ketika kamu memilih Pindai Struk. Kamu tetap dapat menambahkan transaksi secara manual jika izin ditolak."
+  },
+  "D02": {
+    "file": "dokumen/D02-ruangnota.pdf",
+    "permission": "camera",
+    "nli_expected": "contradiction",
+    "clause": "Aplikasi RuangNota tidak meminta izin Kamera Android. Aplikasi hanya mengambil gambar struk yang sudah dipilih dari galeri. Seluruh fitur dapat digunakan tanpa akses kamera."
+  },
+  "D03": {
+    "file": "dokumen/D03-suararapat.txt",
+    "permission": "microphone",
+    "nli_expected": "entailment",
+    "clause": "The SuaraRapat application requests the Android microphone permission. The app uses the microphone when you tap Start Recording and stops capturing audio when you tap Stop."
+  },
+  "D04": {
+    "file": "dokumen/D04-suararapat.txt",
+    "permission": "microphone",
+    "nli_expected": "contradiction",
+    "clause": "The SuaraRapat application does not request the Android microphone permission. The app never captures audio. It accepts existing recordings only after you select them from your device."
+  },
+  "S01": {
+    "file": "screenshot/S01-pasarrona.png",
+    "visual_expected": "no_pattern_detected",
+    "roi": [
+      0,
+      0.5,
+      1,
+      0.5
+    ]
+  },
+  "S02": {
+    "file": "screenshot/S02-pasarrona.png",
+    "visual_expected": "potential_dark_pattern",
+    "roi": [
+      0,
+      0.5,
+      1,
+      0.5
+    ]
+  },
+  "S03": {
+    "file": "screenshot/S03-antarkini.png",
+    "visual_expected": "no_pattern_detected",
+    "roi": [
+      0,
+      0.5,
+      1,
+      0.5
+    ]
+  },
+  "S04": {
+    "file": "screenshot/S04-antarkini.png",
+    "visual_expected": "potential_dark_pattern",
+    "roi": [
+      0,
+      0.5,
+      1,
+      0.5
+    ]
+  },
+  "L01": {
+    "files": [
+      "livescan/L01-bingkai-1.png",
+      "livescan/L01-bingkai-2.png"
+    ],
+    "nli_expected": "entailment",
+    "frames": [
+      [
+        "Izin Kamera Android",
+        "Aplikasi RuangNota meminta izin Kamera Android. Izin kamera digunakan untuk memotret struk ketika kamu memilih Pindai Struk. Kamu tetap dapat menambahkan transaksi secara manual jika izin ditolak.",
+        "Kendali Data dan Izin"
+      ],
+      [
+        "Kendali Data dan Izin",
+        "Buka Pengaturan untuk mengatur izin pada perangkat.",
+        "Pilihan ini bisa diubah kapan saja.",
+        "Buka Data Saya untuk mengunduh atau menghapus struk."
+      ]
+    ]
+  },
+  "L02": {
+    "files": [
+      "livescan/L02-bingkai-1.png",
+      "livescan/L02-bingkai-2.png"
+    ],
+    "nli_expected": "contradiction",
+    "frames": [
+      [
+        "Izin Kamera Android",
+        "Aplikasi RuangNota tidak meminta izin Kamera Android. Aplikasi hanya mengambil gambar struk yang sudah dipilih dari galeri. Seluruh fitur dapat digunakan tanpa akses kamera.",
+        "Kendali Data dan Izin"
+      ],
+      [
+        "Kendali Data dan Izin",
+        "Buka Pengaturan untuk mengatur izin pada perangkat.",
+        "Pilihan ini bisa diubah kapan saja.",
+        "Buka Data Saya untuk mengunduh atau menghapus struk."
+      ]
+    ]
+  },
+  "P01": {
+    "clause": "We share order identifiers and your device advertising ID with our advertising partners to measure campaign performance.",
+    "topics_expected": [
+      "third_party_sharing_collection"
+    ]
+  },
+  "P02": {
+    "clause": "We keep purchase receipts for 90 days and remove them automatically after that period.",
+    "topics_expected": [
+      "data_retention"
+    ]
+  },
+  "P03": {
+    "clause": "You can request a copy of your profile and permanently delete your personal data in Account Settings.",
+    "topics_expected": [
+      "user_access_edit_deletion"
+    ]
+  },
+  "P04": {
+    "clause": "We use encryption to protect your personal data in transit and at rest.",
+    "topics_expected": [
+      "data_security"
+    ]
+  }
+}

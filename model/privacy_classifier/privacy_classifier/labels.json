@@ -1,0 +1,25 @@
+{
+  "labels": [
+    "first_party_collection_use",
+    "third_party_sharing_collection",
+    "user_choice_control",
+    "user_access_edit_deletion",
+    "data_retention",
+    "data_security",
+    "policy_change",
+    "do_not_track",
+    "international_specific_audiences"
+  ],
+  "id2label": {
+    "0": "first_party_collection_use",
+    "1": "third_party_sharing_collection",
+    "2": "user_choice_control",
+    "3": "user_access_edit_deletion",
+    "4": "data_retention",
+    "5": "data_security",
+    "6": "policy_change",
+    "7": "do_not_track",
+    "8": "international_specific_audiences"
+  },
+  "formulation": "multi_label_classification"
+}

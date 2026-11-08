@@ -1,0 +1,8 @@
+{
+  "run": "/kaggle/working/konsena_tuning/onnx_candidates/artifacts/training/policy_student",
+  "task": "policy",
+  "fp32_file": "privacy_classifier_fp32.onnx",
+  "sha256": "15fbfb2da162cb196b0b7a0526840e983caaa5a7d18029c61bfea304d812f41e",
+  "profile": "TARGETED_TUNING",
+  "release_eligible": false
+}

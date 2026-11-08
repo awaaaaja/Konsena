@@ -1,0 +1,296 @@
+[
+  {
+    "id": 0,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 0,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.22974395751953125,
+      0.1503598541021347
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/0.f32",
+    "tensor_sha256": "ac57334788540116659ce7c7946950333b8d7ae7a7a1f1a43ecb3b0e3c8b3408"
+  },
+  {
+    "id": 1,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 1,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.05677294731140137,
+      0.26574963331222534
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/1.f32",
+    "tensor_sha256": "8be9e4beebb8eca58214568f2b8b93617a50c53efd55f31e303388d20fa3580c"
+  },
+  {
+    "id": 2,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 2,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.2042790949344635,
+      0.27752685546875
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/2.f32",
+    "tensor_sha256": "bc25f19d9f968d06098c4ae55780a46e700ba0c468a562ab0d65ff5a7d39624a"
+  },
+  {
+    "id": 3,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 3,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.22011812031269073,
+      0.26570528745651245
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/3.f32",
+    "tensor_sha256": "d8226259d6dd4d168ee596ec78ef5893f8ff8f54b9e082f733326265c08fd8d6"
+  },
+  {
+    "id": 4,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 4,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.13701897859573364,
+      0.33300209045410156
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/4.f32",
+    "tensor_sha256": "bac1a01603a2f092159989b73b1a928de70e4b82c405376b6e506af3d9b01db7"
+  },
+  {
+    "id": 5,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 5,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.37143418192863464,
+      0.36915093660354614
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/5.f32",
+    "tensor_sha256": "1b331059d61b6d4fcd174f04de5d2f4464adc28d1c43884c21cd46a26df737c7"
+  },
+  {
+    "id": 6,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 6,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.17792671918869019,
+      0.32117801904678345
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/6.f32",
+    "tensor_sha256": "dba30776072c5d43e290660ad3f57fa07dd75d48d5776137f48369ea02971d13"
+  },
+  {
+    "id": 7,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 7,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.3000248670578003,
+      0.4080812335014343
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/7.f32",
+    "tensor_sha256": "4020c5e77a8d5ef12d9472e2e29beeb390f190f76b8f687de932f663f982b3c5"
+  },
+  {
+    "id": 8,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 8,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.1904272437095642,
+      0.45910900831222534
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/8.f32",
+    "tensor_sha256": "b7edddb8f015d9baa8033fc0d3a45202cdc903d396974e5fd94a84a75812575d"
+  },
+  {
+    "id": 9,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 9,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.11878686398267746,
+      0.0997077077627182
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/9.f32",
+    "tensor_sha256": "0eb25f9e33e6b8f0e1fb3933544a1a28a5b61a0519b31151b96d6e72098f13da"
+  },
+  {
+    "id": 10,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 10,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.15686511993408203,
+      0.1835794895887375
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/10.f32",
+    "tensor_sha256": "5780a04c12f8a9a511692d1f622630877a4e467ed78c6b82997070200d022445"
+  },
+  {
+    "id": 11,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 11,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.15945842862129211,
+      0.3459872007369995
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/11.f32",
+    "tensor_sha256": "2bf390fb66892ddba019e551aeeaca50120abc247de51c29810a5a15b29695c6"
+  },
+  {
+    "id": 12,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 12,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.14650598168373108,
+      0.1809907853603363
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/12.f32",
+    "tensor_sha256": "017871f7fa4a7da1323834820cad1be148b71f8179ed8120f2d27fb0e65ec3c5"
+  },
+  {
+    "id": 13,
+    "kind": "authored_contract_probe_not_evaluation",
+    "procedural_uniform_seed": 13,
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "generator": "numpy PCG64 uniform(-1,1) float32; use stored tensor for cross-language vectors",
+    "expected_logits": [
+      -0.21159620583057404,
+      0.37354576587677
+    ],
+    "expected_decoded_labels": [
+      "potential_dark_pattern"
+    ],
+    "tensor_file": "golden_tensors/13.f32",
+    "tensor_sha256": "7107f5f0c2aa38b3a686e40cf8e42ca4bdaf28742f49e375005e67753ba8c2c9"
+  }
+]
